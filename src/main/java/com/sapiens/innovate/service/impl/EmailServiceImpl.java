@@ -86,8 +86,7 @@ public class EmailServiceImpl implements EmailService {
         expiryTime = token.getExpiresAt();
         return cachedToken.get();
     }
-
-    public List<EmailVO> getAllEmails() {
+    private List<EmailVO> getEmailsFromEmailServer(){
         List<EmailVO> returnal = new ArrayList<>();
         graphClient.me().mailFolders("Inbox").messages()
                 .buildRequest()
@@ -115,6 +114,27 @@ public class EmailServiceImpl implements EmailService {
 
                     returnal.add(email);
                 });
+        return returnal;
+    }
+    private List<EmailVO> getEmailsForTest(){
+        List<EmailVO> returnal = new ArrayList<>();
+        EmailVO email = new EmailVO();
+        email.setSubject("Create claim for below details");
+        email.setMailBody("I was in a car accident on Oct 2nd and need to file a claim for my policy #123456.");
+        email.setSenderEmailId("sant@gmail.com");
+        List<String> toEmails = List.of(new String[]{"santosh@gmail.com"});
+        email.setToMailId(toEmails);
+        List<String> ccEmails = List.of(new String[]{"santosh1@gmail.com"});
+        email.setCcMailId(ccEmails);
+
+        returnal.add(email);
+        return returnal;
+    }
+
+    public List<EmailVO> getAllEmails() {
+        List<EmailVO> returnal = new ArrayList<>();
+        //returnal = getEmailsFromEmailServer();
+        returnal = getEmailsForTest();
         return returnal;
     }
     @Override
