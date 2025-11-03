@@ -4,8 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 
-@Configuration
-@ConfigurationProperties(prefix = "app") // you can choose a custom prefix
+@Configuration(proxyBeanMethods = false)
 public class Configurations {
     private static Configurations instance;
 
