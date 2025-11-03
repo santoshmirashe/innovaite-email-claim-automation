@@ -18,7 +18,6 @@ public class GPTProcessorImpl implements GPTProcessor {
     }
         private GPTProcessorImpl() {
             this.webClient = WebClient.builder()
-                    //.baseUrl(Configurations.getInstance().getApiUrl())
                     .baseUrl(Configurations.getInstance().getAiApiUrl())
                     .defaultHeader("Authorization", "Bearer " + Configurations.getInstance().getAiApiUrl())
                     .defaultHeader("Content-Type", "application/json")
