@@ -20,7 +20,17 @@ public class Configurations {
     private String applicationName;
 
     private String apiKey;
-    // getters and setters
+
+    private String apiUrl;
+
+    public String getApiUrl() {
+        return apiUrl;
+    }
+
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
     public String getApiKey() { return apiKey; }
     public void setApiKey(String apiKey) { this.apiKey = apiKey; }
     public int getServerPort() { return serverPort; }
