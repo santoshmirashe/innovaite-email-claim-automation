@@ -37,10 +37,9 @@ public class GPTProcessorImpl implements GPTProcessor {
                       "temperature": 0
                     }
                     """.formatted(prompt);
-
             String response = webClient.post()
-                    .uri("https://jfc-uigen-foundry.openai.azure.com/openai/responses?api-version=2025-04-01-preview")
-                    .header("api-key", "aEaQzlTEy4ZhrAJqcdpW8b2dhTxSfwbi23iO8Oqr7n4eoOAGZpxWJQQJ99BJACYeBjFXJ3w3AAAAACOGPvU7")
+                    .uri(Configurations.getInstance().getAiApiUrl())
+                    .header("api-key", Configurations.getInstance().getAiApiKey())
                     .header("Content-Type", "application/json")
                     .bodyValue(requestBody)
                     .retrieve()
