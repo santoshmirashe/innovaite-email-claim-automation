@@ -19,7 +19,7 @@ public class ClaimServiceImpl implements ClaimService {
     }
     @Override
     public void raiseClaim(ClaimDataVO claimDataVO) {
-
+    //Add logic to call IDIT API
     }
 
     @Override
