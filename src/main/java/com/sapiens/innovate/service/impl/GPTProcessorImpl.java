@@ -18,8 +18,9 @@ public class GPTProcessorImpl implements GPTProcessor {
     }
         private GPTProcessorImpl() {
             this.webClient = WebClient.builder()
-                    .baseUrl(Configurations.getInstance().getApiUrl())
-                    .defaultHeader("Authorization", "Bearer " + Configurations.getInstance().getApiKey())
+                    //.baseUrl(Configurations.getInstance().getApiUrl())
+                    .baseUrl("https://jfc-uigen-foundry.openai.azure.com/openai/responses?api-version=2025-04-01-preview")
+                    .defaultHeader("Authorization", "Bearer " + "aEaQzlTEy4ZhrAJqcdpW8b2dhTxSfwbi23iO8Oqr7n4eoOAGZpxWJQQJ99BJACYeBjFXJ3w3AAAAACOGPvU7")
                     .defaultHeader("Content-Type", "application/json")
                     .build();
         }
@@ -38,6 +39,9 @@ public class GPTProcessorImpl implements GPTProcessor {
                     """.formatted(prompt);
 
             String response = webClient.post()
+                    .uri("https://jfc-uigen-foundry.openai.azure.com/openai/responses?api-version=2025-04-01-preview")
+                    .header("api-key", "aEaQzlTEy4ZhrAJqcdpW8b2dhTxSfwbi23iO8Oqr7n4eoOAGZpxWJQQJ99BJACYeBjFXJ3w3AAAAACOGPvU7")
+                    .header("Content-Type", "application/json")
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)

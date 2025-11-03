@@ -1,7 +1,6 @@
 package com.sapiens.innovate.service.impl;
 
 import com.sapiens.innovate.service.inf.ClaimService;
-import com.sapiens.innovate.service.inf.EmailService;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.EmailVO;
 

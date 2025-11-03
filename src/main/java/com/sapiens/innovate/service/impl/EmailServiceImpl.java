@@ -73,7 +73,7 @@ public class EmailServiceImpl implements EmailService {
                 .buildClient();
     }
     private EmailServiceImpl() {
-        buildClient();
+        //buildClient();
     }
 
     private String getValidToken() {
