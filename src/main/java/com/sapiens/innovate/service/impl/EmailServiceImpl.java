@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class EmailServiceImpl implements EmailService {
 
-    private final GraphServiceClient<Request> graphClient;
-    private final ClientSecretCredential credential;
+    private GraphServiceClient<Request> graphClient;
+    private ClientSecretCredential credential;
     private final AtomicReference<String> cachedToken = new AtomicReference<>();
     private OffsetDateTime expiryTime = OffsetDateTime.MIN;
     private static EmailService instance;
@@ -50,8 +50,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-
-    private EmailServiceImpl() {
+    private void buildClient(){
         credential = new ClientSecretCredentialBuilder()
                 .clientId("YOUR_CLIENT_ID")
                 .clientSecret("YOUR_CLIENT_SECRET")
@@ -72,6 +71,9 @@ public class EmailServiceImpl implements EmailService {
         this.graphClient = GraphServiceClient.builder()
                 .authenticationProvider(authProvider)
                 .buildClient();
+    }
+    private EmailServiceImpl() {
+        buildClient();
     }
 
     private String getValidToken() {
