@@ -4,6 +4,7 @@ import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,11 +22,15 @@ public class AzureMailConfig {
     private String tenantId;
 
     @Bean
-    public ClientSecretCredential clientSecretCredential() {
+    @ConditionalOnProperty(name = "azure.mail.enabled", havingValue = "true")
+    public ClientSecretCredential clientSecretCredential(
+            @Value("${azure.tenant-id}") String tenantId,
+            @Value("${azure.client-id}") String clientId,
+            @Value("${azure.client-secret}") String clientSecret) {
         return new ClientSecretCredentialBuilder()
+                .tenantId(tenantId)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
-                .tenantId(tenantId)
                 .build();
     }
 }
