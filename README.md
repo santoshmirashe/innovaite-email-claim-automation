@@ -1,4 +1,4 @@
-# 📧 Innovaite Email Claim Automation
+# 📧 Email Claim Automation
 
 An AI-powered Spring Boot application that automates **insurance claim creation** by reading incoming emails, extracting claim-related details using an **Azure AI Foundry agent**, and integrating with backend claim APIs.
 
