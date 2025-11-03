@@ -27,19 +27,25 @@ This project combines **Spring Boot**, **Microsoft Graph API**, and **Azure AI F
 | User sends email |
 | (Outlook / Gmail) |
 +------------+------------+
+
 |
+
 v
 +------------+------------+
 | Email Fetcher Service |
 | (Microsoft Graph API) |
 +------------+------------+
+
 |
+
 v
 +------------+------------+
 | AI Claim Extractor |
 | (Azure AI Foundry Agent)|
 +------------+------------+
+
 |
+
 v
 +------------+------------+
 | Claim API Client |
