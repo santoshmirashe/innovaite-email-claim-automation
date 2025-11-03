@@ -1,8 +1,8 @@
 package com.sapiens.innovate.service.inf;
 
 import com.sapiens.innovate.vo.ClaimDataVO;
-import jakarta.jms.Message;
+import com.sapiens.innovate.vo.EmailVO;
 
 public interface GPTProcessor {
-    ClaimDataVO analyzeMessage(Message message) throws Exception;
+    ClaimDataVO analyzeMessage(EmailVO message) throws Exception;
 }
