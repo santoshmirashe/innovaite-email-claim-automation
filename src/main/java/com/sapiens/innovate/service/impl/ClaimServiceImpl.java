@@ -3,19 +3,29 @@ package com.sapiens.innovate.service.impl;
 import com.sapiens.innovate.service.inf.ClaimService;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.EmailVO;
+import org.jvnet.hk2.annotations.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@Service
 public class ClaimServiceImpl implements ClaimService {
 
-    private static ClaimService instance;
+    @Autowired
+    protected GPTProcessorImpl gptProcessor;
 
-    public static synchronized ClaimService getInstance() {
+    private static ClaimServiceImpl instance;
+
+    @Autowired
+    protected EmailServiceImpl emailService;
+
+    public static ClaimService getInstance() {
         if (instance == null) {
             instance = new ClaimServiceImpl();
         }
         return instance;
     }
+
     @Override
     public void raiseClaim(ClaimDataVO claimDataVO) {
     //Add logic to call IDIT API
@@ -23,8 +33,6 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public String processClaims() {
-        EmailServiceImpl emailService = (EmailServiceImpl) EmailServiceImpl.getInstance();
-        GPTProcessorImpl gptProcessor = (GPTProcessorImpl) GPTProcessorImpl.getInstance();
         List<EmailVO>  mails = emailService.getAllEmails();
         mails.forEach(mail ->{
             try {
@@ -41,7 +49,7 @@ public class ClaimServiceImpl implements ClaimService {
 
                         Best regards,
                         IDIT Claims Team
-                        """, mail.getSenderEmailId(), claimDataVO.getClaimType());
+                        """, mail.getSenderEmailId());
                 emailService.sendEmail(mail.getSenderEmailId(), subject, body);
 
             } catch (Exception e) {

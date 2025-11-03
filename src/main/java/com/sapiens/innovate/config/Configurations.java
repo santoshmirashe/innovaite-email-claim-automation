@@ -1,10 +1,13 @@
 package com.sapiens.innovate.config;
 
+import lombok.Getter;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Getter
 public class Configurations {
 
     private static Configurations instance;
@@ -43,12 +46,15 @@ public class Configurations {
     // --- Load properties from file ---
     private void loadProperties() {
         properties = new Properties();
-        try (InputStream input = new FileInputStream("src/main/resources/application.properties")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+            if (input == null) {
+                throw new RuntimeException("application.properties not found in classpath");
+            }
             properties.load(input);
 
             // Map properties to fields
-            serverPort = Integer.parseInt(properties.getProperty("server.port"));
-            applicationName = properties.getProperty("spring.application.name");
+            serverPort = Integer.parseInt(properties.getProperty("server.port", "8085"));
+            applicationName = properties.getProperty("spring.application.name", "DefaultApp");
 
             aiApiKey = properties.getProperty("spring.ai.openai.api-key");
             aiApiUrl = properties.getProperty("spring.ai.openai.api-url");
@@ -57,32 +63,15 @@ public class Configurations {
             securityUserPassword = properties.getProperty("spring.security.user.password");
 
             mailHost = properties.getProperty("spring.mail.host");
-            mailPort = Integer.parseInt(properties.getProperty("spring.mail.port"));
+            mailPort = Integer.parseInt(properties.getProperty("spring.mail.port", "587"));
             mailUsername = properties.getProperty("spring.mail.username");
             mailPassword = properties.getProperty("spring.mail.password");
-            mailSmtpAuth = Boolean.parseBoolean(properties.getProperty("spring.mail.properties.mail.smtp.auth"));
-            mailStarttlsEnable = Boolean.parseBoolean(properties.getProperty("spring.mail.properties.mail.smtp.starttls.enable"));
+            mailSmtpAuth = Boolean.parseBoolean(properties.getProperty("spring.mail.properties.mail.smtp.auth", "true"));
+            mailStarttlsEnable = Boolean.parseBoolean(properties.getProperty("spring.mail.properties.mail.smtp.starttls.enable", "true"));
 
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to load application.properties", e);
         }
     }
-
-    // --- Getters ---
-    public int getServerPort() { return serverPort; }
-    public String getApplicationName() { return applicationName; }
-
-    public String getAiApiKey() { return aiApiKey; }
-    public String getAiApiUrl() { return aiApiUrl; }
-
-    public String getSecurityUserName() { return securityUserName; }
-    public String getSecurityUserPassword() { return securityUserPassword; }
-
-    public String getMailHost() { return mailHost; }
-    public int getMailPort() { return mailPort; }
-    public String getMailUsername() { return mailUsername; }
-    public String getMailPassword() { return mailPassword; }
-    public boolean isMailSmtpAuth() { return mailSmtpAuth; }
-    public boolean isMailStarttlsEnable() { return mailStarttlsEnable; }
 }

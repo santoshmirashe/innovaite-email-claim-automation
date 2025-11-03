@@ -1,5 +1,6 @@
 package com.sapiens.innovate.service.impl;
 
+
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
@@ -9,6 +10,7 @@ import com.microsoft.graph.requests.GraphServiceClient;
 import com.sapiens.innovate.service.inf.EmailService;
 import com.sapiens.innovate.vo.EmailVO;
 import okhttp3.Request;
+import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,22 +22,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+@Service
 public class EmailServiceImpl implements EmailService {
 
     private GraphServiceClient<Request> graphClient;
-    private ClientSecretCredential credential;
+
+    @Autowired
+    private final ClientSecretCredential clientSecretCredential;
     private final AtomicReference<String> cachedToken = new AtomicReference<>();
     private OffsetDateTime expiryTime = OffsetDateTime.MIN;
-    private static EmailService instance;
     @Autowired
     private JavaMailSender mailSender;
 
-    public static synchronized EmailService getInstance() {
-        if (instance == null) {
-            instance = new EmailServiceImpl();
-        }
-        return instance;
-    }
 
     public void sendEmail(String to, String subject, String body) {
         try {
@@ -50,37 +48,15 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private void buildClient(){
-        credential = new ClientSecretCredentialBuilder()
-                .clientId("YOUR_CLIENT_ID")
-                .clientSecret("YOUR_CLIENT_SECRET")
-                .tenantId("YOUR_TENANT_ID")
-                .build();
-
-        IAuthenticationProvider authProvider = request -> {
-            String token = credential
-                    .getToken(new TokenRequestContext()
-                            .addScopes("https://graph.microsoft.com/.default"))
-                    .block()
-                    .getToken();
-
-            //request.addHeader("Authorization", "Bearer " + token);
-            return CompletableFuture.completedFuture(null);
-        };
-
-        this.graphClient = GraphServiceClient.builder()
-                .authenticationProvider(authProvider)
-                .buildClient();
-    }
-    private EmailServiceImpl() {
-        //buildClient();
+    public EmailServiceImpl(ClientSecretCredential clientSecretCredential) {
+        this.clientSecretCredential = clientSecretCredential;
     }
 
     private String getValidToken() {
         if (OffsetDateTime.now().isBefore(expiryTime)) {
             return cachedToken.get();
         }
-        var token = credential.getToken(
+        var token = clientSecretCredential.getToken(
                         new TokenRequestContext().addScopes("https://graph.microsoft.com/.default"))
                 .block();
 
@@ -89,7 +65,7 @@ public class EmailServiceImpl implements EmailService {
         return cachedToken.get();
     }
     private List<EmailVO> getEmailsFromEmailServer(){
-        List<EmailVO> returnal = new ArrayList<>();
+        List<EmailVO> returnAll = new ArrayList<>();
         graphClient.me().mailFolders("Inbox").messages()
                 .buildRequest()
                 .filter("isRead eq false")
@@ -114,9 +90,9 @@ public class EmailServiceImpl implements EmailService {
                     email.setMessage(msg);
                     email.setMessageID(msg.id);
 
-                    returnal.add(email);
+                    returnAll.add(email);
                 });
-        return returnal;
+        return returnAll;
     }
     private List<EmailVO> getEmailsForTest(){
         List<EmailVO> returnal = new ArrayList<>();
@@ -134,10 +110,9 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public List<EmailVO> getAllEmails() {
-        List<EmailVO> returnal = new ArrayList<>();
-        //returnal = getEmailsFromEmailServer();
-        returnal = getEmailsForTest();
-        return returnal;
+        List<EmailVO> returnAll = new ArrayList<>();
+        returnAll = getEmailsForTest();
+        return returnAll;
     }
     @Override
     public boolean markMessageRead(String messageId){

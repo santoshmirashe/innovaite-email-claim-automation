@@ -1,33 +1,51 @@
 package com.sapiens.innovate.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClaimDataVO {
+
+    @NotBlank(message = "Policy number is required")
+    @JsonProperty("policy_number")
     private String policyNumber;
-    private LocalDate incidentDate;
-    private String claimType;
-    private String summary;
-    private String sourceEmailMessageId;
+
+    @NotBlank(message = "Contact name is required")
+    @JsonProperty("contact_name")
+    private String contactName;
+
+    @NotBlank(message = "Contact email is required")
+    @Email(message = "Invalid email format")
+    @JsonProperty("from_email")
     private String fromEmail;
-    public ClaimDataVO() {}
-    public String getPolicyNumber() { return policyNumber; }
-    public void setPolicyNumber(String policyNumber) { this.policyNumber = policyNumber; }
-    public LocalDate getIncidentDate() { return incidentDate; }
-    public void setIncidentDate(LocalDate incidentDate) { this.incidentDate = incidentDate; }
-    public String getClaimType() { return claimType; }
-    public void setClaimType(String claimType) { this.claimType = claimType; }
-    public String getSummary() { return summary; }
-    public void setSummary(String summary) { this.summary = summary; }
-    public String getSourceEmailMessageId() { return sourceEmailMessageId; }
-    public void setSourceEmailMessageId(String sourceEmailMessageId) { this.sourceEmailMessageId = sourceEmailMessageId; }
-    public String getFromEmail() { return fromEmail; }
-    public void setFromEmail(String fromEmail) { this.fromEmail = fromEmail; }
-    @Override public String toString() {
-        return "ClaimData{" + "policyNumber='" + policyNumber + '\'' +
-                ", incidentDate=" + incidentDate +
-                ", claimType='" + claimType + '\'' +
-                ", summary='" + summary + '\'' +
-                ", sourceEmailMessageId='" + sourceEmailMessageId + '\'' +
-                ", fromEmail='" + fromEmail + '\'' + '}';
-    }
+
+    @JsonProperty("contact_phone")
+    private String contactPhone;
+
+    @NotBlank(message = "Claim description is required")
+    @JsonProperty("claim_description")
+    private String claimDescription;
+
+    @NotNull(message = "Incident date is required")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("incident_date")
+    private LocalDate incidentDate;
+
+    @JsonProperty("claim_amount")
+    private BigDecimal claimAmount;
+
+    @JsonProperty("summary")
+    private String summary;
+
+    @JsonProperty("source_email_message_id")
+    private String sourceEmailMessageId;
+
 }
