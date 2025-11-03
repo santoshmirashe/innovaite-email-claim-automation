@@ -19,7 +19,7 @@ public class EmailController {
         this.claimService = ClaimServiceImpl.getInstance();
     }
 
-    @PostMapping("/processmails")
+    @PostMapping("/process-mails")
     public String processEmails() {
         return claimService.processClaims();
     }
