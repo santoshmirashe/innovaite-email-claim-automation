@@ -40,7 +40,7 @@ public class EmailServiceImpl implements EmailService {
                     .getToken();
 
             //request.addHeader("Authorization", "Bearer " + token);
-            return CompletableFuture.completedFuture(null); // 👈 this line fixes your error
+            return CompletableFuture.completedFuture(null);
         };
 
         this.graphClient = GraphServiceClient.builder()
