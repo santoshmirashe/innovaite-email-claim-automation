@@ -23,15 +23,22 @@ public class EmailServiceImpl implements EmailService {
     private final ClientSecretCredential credential;
     private final AtomicReference<String> cachedToken = new AtomicReference<>();
     private OffsetDateTime expiryTime = OffsetDateTime.MIN;
+    private static EmailService instance;
 
-    public EmailServiceImpl() {
+    public static synchronized EmailService getInstance() {
+        if (instance == null) {
+            instance = new EmailServiceImpl();
+        }
+        return instance;
+    }
+
+    private EmailServiceImpl() {
         credential = new ClientSecretCredentialBuilder()
                 .clientId("YOUR_CLIENT_ID")
                 .clientSecret("YOUR_CLIENT_SECRET")
                 .tenantId("YOUR_TENANT_ID")
                 .build();
 
-        // ✅ FIXED: proper implementation of IAuthenticationProvider
         IAuthenticationProvider authProvider = request -> {
             String token = credential
                     .getToken(new TokenRequestContext()
