@@ -19,8 +19,8 @@ public class GPTProcessorImpl implements GPTProcessor {
         private GPTProcessorImpl() {
             this.webClient = WebClient.builder()
                     //.baseUrl(Configurations.getInstance().getApiUrl())
-                    .baseUrl("https://jfc-uigen-foundry.openai.azure.com/openai/responses?api-version=2025-04-01-preview")
-                    .defaultHeader("Authorization", "Bearer " + "aEaQzlTEy4ZhrAJqcdpW8b2dhTxSfwbi23iO8Oqr7n4eoOAGZpxWJQQJ99BJACYeBjFXJ3w3AAAAACOGPvU7")
+                    .baseUrl(Configurations.getInstance().getAiApiUrl())
+                    .defaultHeader("Authorization", "Bearer " + Configurations.getInstance().getAiApiUrl())
                     .defaultHeader("Content-Type", "application/json")
                     .build();
         }
