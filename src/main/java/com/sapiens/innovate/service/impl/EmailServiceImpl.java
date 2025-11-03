@@ -7,7 +7,6 @@ import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.models.Message;
 import com.microsoft.graph.requests.GraphServiceClient;
 import com.sapiens.innovate.service.inf.EmailService;
-import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.EmailVO;
 import okhttp3.Request;
 
