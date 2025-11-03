@@ -1,0 +1,15 @@
+Index: target/classes/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=innovaite-email-claim-automation\r\nspring.ai.openai.api-key=sk-<your_openai_api_key>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/application.properties b/target/classes/application.properties
+--- a/target/classes/application.properties	(revision 9c315e1edc24e8395cc09a75c0cf409de91eea6a)
++++ b/target/classes/application.properties	(date 1762167434685)
+@@ -1,3 +1,3 @@
+ spring.application.name=innovaite-email-claim-automation
+-spring.ai.openai.api-key=sk-<your_openai_api_key>
++spring.ai.openai.api-key=aEaQzlTEy4ZhrAJqcdpW8b2dhTxSfwbi23iO8Oqr7n4eoOAGZpxWJQQJ99BJACYeBjFXJ3w3AAAAACOGPvU7
+ 
