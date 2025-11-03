@@ -9,6 +9,9 @@ import com.microsoft.graph.requests.GraphServiceClient;
 import com.sapiens.innovate.service.inf.EmailService;
 import com.sapiens.innovate.vo.EmailVO;
 import okhttp3.Request;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -24,6 +27,8 @@ public class EmailServiceImpl implements EmailService {
     private final AtomicReference<String> cachedToken = new AtomicReference<>();
     private OffsetDateTime expiryTime = OffsetDateTime.MIN;
     private static EmailService instance;
+    @Autowired
+    private JavaMailSender mailSender;
 
     public static synchronized EmailService getInstance() {
         if (instance == null) {
@@ -31,6 +36,20 @@ public class EmailServiceImpl implements EmailService {
         }
         return instance;
     }
+
+    public void sendEmail(String to, String subject, String body) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
+            mailSender.send(message);
+            System.out.println("Email sent successfully to " + to);
+        } catch (Exception e) {
+            System.out.println("Error sending email: " + e.getMessage());
+        }
+    }
+
 
     private EmailServiceImpl() {
         credential = new ClientSecretCredentialBuilder()

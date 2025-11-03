@@ -30,9 +30,21 @@ public class ClaimServiceImpl implements ClaimService {
         mails.forEach(mail ->{
             try {
                 ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(mail);
-                this.raiseClaim(claimDataVO);
+                this.raiseClaim(claimDataVO); //TODO by Sibtain/Vijay
                 emailService.markMessageRead(mail.getMessageID());
-                //Add send email logic
+
+                String subject = "Claim Received - Reference: " + claimDataVO.getPolicyNumber();
+                String body = String.format("""
+                        Dear %s,
+
+                        Your claim has been successfully received and is being processed.
+                        Claim ID: %s
+
+                        Best regards,
+                        IDIT Claims Team
+                        """, mail.getSenderEmailId(), claimDataVO.getClaimType());
+                emailService.sendEmail(mail.getSenderEmailId(), subject, body);
+
             } catch (Exception e) {
                 System.out.println("Error : "+e.getMessage());
             }
