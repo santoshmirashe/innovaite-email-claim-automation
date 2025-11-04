@@ -5,34 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f752f702-18a2-4715-b339-65494a4eab68" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/vo/EmailSummary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/InnovaiteEmailClaimAutomationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/InnovaiteEmailClaimAutomationApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/controller/EmailController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/controller/EmailController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/impl/ClaimServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/impl/EmailServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/impl/GPTProcessorImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GPTProcessorService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/inf/ClaimService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/inf/EmailNotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/EmailNotificationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/inf/EmailService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/inf/GPTProcessor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/vo/EmailVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/vo/EmailVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/config/Configurations.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/config/Configurations.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/controller/EmailController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/controller/EmailController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/impl/ClaimServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/impl/EmailServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/impl/GPTProcessorImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/inf/ClaimService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/inf/EmailService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/inf/GPTProcessor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/util/Utils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/util/Utils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/vo/ClaimDataVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/vo/ClaimDataVO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/vo/EmailVO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/vo/EmailVO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/ClaimService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/ClaimService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/GmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sapiens/innovate/service/GmailService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +138,14 @@
       <option name="project" value="LOCAL" />
       <updated>1762176767745</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Commit">
+      <created>1762232554615</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1762232554615</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -184,11 +170,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/controller/EmailController.java</url>
           <line>23</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java</url>
-          <line>29</line>
-          <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java</url>
@@ -234,6 +215,41 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java</url>
           <line>41</line>
           <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java</url>
+          <line>29</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java</url>
+          <line>109</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/GmailService.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java</url>
+          <line>30</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sapiens/innovate/service/ClaimService.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="33" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

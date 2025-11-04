@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +32,9 @@ public class GmailService {
 
     @Value("${mail.imap.folder:INBOX}")
     private String folderName;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     private Session createSession() {
         Properties props = new Properties();
@@ -56,11 +62,11 @@ public class GmailService {
                             : "unknown";
                     String subject = msg.getSubject();
                     String snippet = extractText(msg);
-                    boolean seen = msg.isSet(Flag.SEEN);
                     EmailVO emailVO = new EmailVO();
                     emailVO.setMailBody(snippet == null ? "": snippet);
                     emailVO.setSubject(subject);
                     emailVO.setSenderEmailId(from);
+                    emailVO.setMessage(msg);
                     result.add(emailVO);
                 }
                 return result;
@@ -74,7 +80,7 @@ public class GmailService {
             message.setTo(to);
             message.setSubject(subject);
             message.setText(body);
-            //mailSender.send(message);
+            mailSender.send(message);
             System.out.println("Email sent successfully to " + to);
         } catch (Exception e) {
             System.out.println("Error sending email: " + e.getMessage());

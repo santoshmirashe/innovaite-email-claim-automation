@@ -29,7 +29,6 @@ public class ClaimService {
             try {
                 ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(mail);
                 this.raiseClaim(claimDataVO); //TODO by Sibtain/Vijay
-                gmailService.markMessageRead(mail.getMessage());
 
                 String subject = "Claim Received - Reference: " + claimDataVO.getPolicyNumber();
                 String body = String.format("""
