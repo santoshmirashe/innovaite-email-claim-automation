@@ -45,11 +45,11 @@ public class ClaimServiceImpl implements ClaimService {
                         Dear %s,
 
                         Your claim has been successfully received and is being processed.
-                        Claim ID: %s
+                        Policy No: %s
 
                         Best regards,
                         IDIT Claims Team
-                        """, mail.getSenderEmailId());
+                        """, mail.getSenderEmailId(),claimDataVO.getPolicyNumber());
                 emailService.sendEmail(mail.getSenderEmailId(), subject, body);
 
             } catch (Exception e) {
