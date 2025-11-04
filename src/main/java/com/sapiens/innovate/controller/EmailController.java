@@ -29,7 +29,8 @@ public class EmailController {
 
     @GetMapping("/process-mails")
     public String processEmails() throws MessagingException, IOException {
-        return claimService.processClaims();
+        return "";
+        //return claimService.processClaims();
     }
 
 
