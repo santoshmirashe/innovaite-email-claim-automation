@@ -26,7 +26,7 @@ public class Utils {
             return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException e1) {
             try {
-                return LocalDate.parse(value, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } catch (DateTimeParseException e2) {
                 try {
                     return LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));

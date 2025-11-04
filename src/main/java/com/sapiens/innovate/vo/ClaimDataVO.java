@@ -15,37 +15,37 @@ import java.time.LocalDate;
 public class ClaimDataVO {
 
     @NotBlank(message = "Policy number is required")
-    @JsonProperty("policy_number")
+    @JsonProperty("policyNumber")
     private String policyNumber;
 
     @NotBlank(message = "Contact name is required")
-    @JsonProperty("contact_name")
+    @JsonProperty("contactName")
     private String contactName;
 
     @NotBlank(message = "Contact email is required")
     @Email(message = "Invalid email format")
-    @JsonProperty("from_email")
+    @JsonProperty("fromEmail")
     private String fromEmail;
 
-    @JsonProperty("contact_phone")
+    @JsonProperty("contactPhone")
     private String contactPhone;
 
     @NotBlank(message = "Claim description is required")
-    @JsonProperty("claim_description")
+    @JsonProperty("claimDescription")
     private String claimDescription;
 
     @NotNull(message = "Incident date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonProperty("incident_date")
+    @JsonProperty("incidentDate")
     private LocalDate incidentDate;
 
-    @JsonProperty("claim_amount")
+    @JsonProperty("claimAmount")
     private BigDecimal claimAmount;
 
     @JsonProperty("summary")
     private String summary;
 
-    @JsonProperty("source_email_message_id")
+    @JsonProperty("sourceEmailMessageId")
     private String sourceEmailMessageId;
 
 }

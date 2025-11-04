@@ -69,7 +69,7 @@ public class GPTProcessorService {
                 .fromEmail(getText(node, "email"))
                 .claimAmount(Utils.parseBigDecimal(getText(node, "claimedAmount")))
                 .incidentDate(Utils.parseLocalDate(getText(node, "incidentDate")))
-                .summary(getText(node, "description"))
+                .claimDescription(getText(node, "description"))
                 .build();
 
         return claimData;
