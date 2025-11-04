@@ -7,7 +7,9 @@ import com.sapiens.innovate.vo.EmailVO;
 import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,10 +21,13 @@ public class ClaimService {
 
     @Autowired
     protected GmailService gmailService;
-
+    private final RestTemplate restTemplate = new RestTemplate();
     public ClaimResponseVO raiseClaim(ClaimDataVO claimDataVO) {
-    //Add logic to call IDIT API
-        return null;
+        String url = "http://10.44.188.196/v1/claimAI";
+        ResponseEntity<ClaimResponseVO> response =
+                restTemplate.postForEntity(url, claimDataVO, ClaimResponseVO.class);
+
+        return response.getBody();
     }
 
     public String processClaims() throws MessagingException, IOException {
