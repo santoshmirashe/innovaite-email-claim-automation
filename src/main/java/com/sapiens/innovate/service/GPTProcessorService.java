@@ -62,7 +62,7 @@ public class GPTProcessorService {
         options.setMaxCompletionTokens(1500);
 
         // Invoke the Azure model
-        ChatCompletions chatCompletions = openAIClient.getChatCompletions(deploymentName, new ChatCompletionsOptions(chatMessages).setTemperature(0.0));
+        ChatCompletions chatCompletions = openAIClient.getChatCompletions(deploymentName, new ChatCompletionsOptions(chatMessages));
 
         // Extract response text
         String content = chatCompletions.getChoices().get(0).getMessage().getContent();
