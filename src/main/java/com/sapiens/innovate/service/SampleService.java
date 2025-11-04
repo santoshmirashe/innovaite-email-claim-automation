@@ -47,4 +47,36 @@ public class SampleService {
         }
     }
 
+    public String getAIResponse(String userMessage) {
+            OpenAIClient client = new OpenAIClientBuilder()
+                    .credential(new AzureKeyCredential(apiKey))
+                    .endpoint(endPoint)
+                    .buildClient();
+
+            // Create chat messages (system prompt + dynamic user message)
+            List<ChatRequestMessage> chatMessages = Arrays.asList(
+                    new ChatRequestSystemMessage("You are a helpful assistant."),
+                    new ChatRequestUserMessage(userMessage)
+            );
+
+            // Optional: configure completion settings
+            OpenAiChatOptions chatOptions = new OpenAiChatOptions();
+            chatOptions.setMaxCompletionTokens(2048);
+
+            ChatCompletions chatCompletions = client.getChatCompletions(
+                    deploymentName,
+                    new ChatCompletionsOptions(chatMessages)
+            );
+
+            StringBuilder responseBuilder = new StringBuilder();
+
+            for (ChatChoice choice : chatCompletions.getChoices()) {
+                ChatResponseMessage message = choice.getMessage();
+                if (message != null && message.getContent() != null) {
+                    responseBuilder.append(message.getContent()).append("\n");
+                }
+            }
+
+            return responseBuilder.toString().trim();
+        }
 }
