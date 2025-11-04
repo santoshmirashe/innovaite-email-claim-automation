@@ -28,7 +28,7 @@ public class ClaimService {
         mails.forEach(mail ->{
             try {
                 ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(mail);
-                this.raiseClaim(claimDataVO); //TODO by Sibtain/Vijay
+                this.raiseClaim(claimDataVO); //TODO by Vijay
 
                 String subject = "Claim Received - Reference: " + claimDataVO.getPolicyNumber();
                 String body = String.format("""
