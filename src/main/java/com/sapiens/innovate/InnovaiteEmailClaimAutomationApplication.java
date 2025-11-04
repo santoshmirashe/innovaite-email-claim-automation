@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.sapiens.innovate")
 public class InnovaiteEmailClaimAutomationApplication {
 
 	public static void main(String[] args) {

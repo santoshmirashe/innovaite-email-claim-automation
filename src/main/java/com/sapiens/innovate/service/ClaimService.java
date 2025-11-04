@@ -1,44 +1,35 @@
-package com.sapiens.innovate.service.impl;
+package com.sapiens.innovate.service;
 
-import com.sapiens.innovate.service.inf.ClaimService;
+
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.EmailVO;
-import org.jvnet.hk2.annotations.Service;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.mail.MessagingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
-public class ClaimServiceImpl implements ClaimService {
+public class ClaimService {
+    @Autowired
+    protected GPTProcessorService gptProcessor;
 
     @Autowired
-    protected GPTProcessorImpl gptProcessor;
+    protected GmailService gmailService;
 
-    private static ClaimServiceImpl instance;
-
-    @Autowired
-    protected EmailServiceImpl emailService;
-
-    public static ClaimService getInstance() {
-        if (instance == null) {
-            instance = new ClaimServiceImpl();
-        }
-        return instance;
-    }
-
-    @Override
     public void raiseClaim(ClaimDataVO claimDataVO) {
     //Add logic to call IDIT API
     }
 
-    @Override
-    public String processClaims() {
-        List<EmailVO>  mails = emailService.getAllEmails();
+    public String processClaims() throws MessagingException, IOException {
+        List<EmailVO> mails = gmailService.fetchUnreadEmails(1000);
         mails.forEach(mail ->{
             try {
                 ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(mail);
                 this.raiseClaim(claimDataVO); //TODO by Sibtain/Vijay
-                emailService.markMessageRead(mail.getMessageID());
+                gmailService.markMessageRead(mail.getMessage());
 
                 String subject = "Claim Received - Reference: " + claimDataVO.getPolicyNumber();
                 String body = String.format("""
@@ -50,7 +41,7 @@ public class ClaimServiceImpl implements ClaimService {
                         Best regards,
                         IDIT Claims Team
                         """, mail.getSenderEmailId(),claimDataVO.getPolicyNumber());
-                emailService.sendEmail(mail.getSenderEmailId(), subject, body);
+                gmailService.sendEmail(mail.getSenderEmailId(), subject, body);
 
             } catch (Exception e) {
                 System.out.println("Error : "+e.getMessage());

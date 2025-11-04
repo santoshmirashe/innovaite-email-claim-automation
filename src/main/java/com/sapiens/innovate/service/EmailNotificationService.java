@@ -1,4 +1,4 @@
-package com.sapiens.innovate.service.inf;
+package com.sapiens.innovate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

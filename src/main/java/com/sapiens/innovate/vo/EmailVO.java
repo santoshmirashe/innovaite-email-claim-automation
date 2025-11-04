@@ -1,8 +1,7 @@
 package com.sapiens.innovate.vo;
 
-import com.microsoft.graph.models.Message;
+import jakarta.mail.Message;
 import lombok.*;
-
 import java.io.File;
 import java.util.List;
 
@@ -19,5 +18,4 @@ public class EmailVO {
     String messageID;
     Message message;
     List<File> attachments;
-
 }

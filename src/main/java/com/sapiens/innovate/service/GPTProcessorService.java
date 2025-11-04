@@ -1,20 +1,18 @@
-package com.sapiens.innovate.service.impl;
+package com.sapiens.innovate.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sapiens.innovate.service.inf.GPTProcessor;
 import com.sapiens.innovate.util.Utils;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.EmailVO;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-public class GPTProcessorImpl implements GPTProcessor {
+public class GPTProcessorService {
 
     private final WebClient azureAIWebClient;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -26,11 +24,11 @@ public class GPTProcessorImpl implements GPTProcessor {
     private String apiVersion;
 
     @Autowired
-    public GPTProcessorImpl(WebClient azureAIWebClient) {
+    public GPTProcessorService(WebClient azureAIWebClient) {
         this.azureAIWebClient = azureAIWebClient;
     }
 
-    @Override
+
     public ClaimDataVO analyzeMessage(EmailVO message) throws Exception {
         String prompt = buildPrompt(message);
 
