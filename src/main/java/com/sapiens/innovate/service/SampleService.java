@@ -5,6 +5,7 @@ import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.ai.openai.models.*;
 import com.azure.core.credential.AzureKeyCredential;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -14,10 +15,13 @@ import java.util.List;
 public class SampleService {
 
 
+    @Value("${azure.ai.api-key}")
     private String apiKey;
 
+    @Value("${azure.ai.endpoint}")
     private String endPoint;
 
+    @Value("${azure.ai.deployment}")
     private String deploymentName;
 
 
