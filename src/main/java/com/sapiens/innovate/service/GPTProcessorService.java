@@ -53,6 +53,8 @@ public class GPTProcessorService {
                 new ChatRequestAssistantMessage(getFewShotResponse1()),
                 new ChatRequestUserMessage(getFewShotExample2()),
                 new ChatRequestAssistantMessage(getFewShotResponse2()),
+                new ChatRequestUserMessage(getFewShotExample3()),
+                new ChatRequestAssistantMessage(getFewShotResponse3()),
                 new ChatRequestUserMessage(prompt)
         );
 
@@ -110,7 +112,7 @@ public class GPTProcessorService {
                 - Policy: "policy number", "policy no", "policy #", "pol", "policy id"
                 - Name: "name", "my name is", "I am", "policyholder"
                 - Phone: "phone", "mobile", "contact", "call me at"
-                - Date: "incident date", "accident date", "on", "date of incident", "occurred on"
+                - Date: "incident date", "accident date", "on", "date of incident", "occurred on","Event date"
                 - Amount: "claim amount", "damages", "cost", "estimate", "$"
                 """;
     }
@@ -180,6 +182,44 @@ public class GPTProcessorService {
                   "claimedAmount": 12000,
                   "incidentDate": "2024-10-15",
                   "description": "Fire in kitchen that caused significant damage"
+                }
+                """;
+    }
+
+    private String getFewShotExample3() {
+        return """
+                Subject: Reporting Claim Against
+                                
+                Hi Team,
+                
+                I would like to file an insurance claim for my car accident that happened yesterday. Below are my details:
+            
+                Policy Number: P123456
+                Policy Holder Name: John Smith
+                Contact Number: 555-9876
+                Email: john.fernandes@example.com
+                Amount to claim: ₹12000
+                Event Date: 4th of November this year.
+                
+                My house caught fire because of a flood that occurred recently.
+                Please process my claim as soon as possible.
+                                
+                Best regards,
+                John
+                """;
+    }
+
+    private String getFewShotResponse3() {
+        return """
+                {
+                  "policyNumber": "P123456",
+                  "policyHolderName": "John Smith",
+                  "contactNumber": "555-9876",
+                  "email": "john@example.com",
+                  "sumInsured": null,
+                  "claimedAmount": 12000,
+                  "incidentDate": "2025-11-04",
+                  "description": " My house caught fire because of a flood that occurred recently."
                 }
                 """;
     }
