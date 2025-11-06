@@ -1,6 +1,8 @@
 package com.sapiens.innovate.vo;
 
+import jakarta.mail.Address;
 import jakarta.mail.Message;
+import jakarta.mail.internet.InternetAddress;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +21,12 @@ public class EmailVO {
     String messageID;
     Message message;
     List<EmailAttachment> attachments;
+
+    public void setCcMailRecipients(Address[] allRecipients) {
+        for (Address address : allRecipients){
+            this.getCcMailAddress().add(((InternetAddress)address).getAddress());
+        }
+    }
 
 
     @Data

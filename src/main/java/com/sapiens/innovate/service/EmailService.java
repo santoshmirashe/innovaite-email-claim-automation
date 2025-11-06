@@ -19,7 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GmailService {
+public class EmailService {
 
     @Value("${mail.imap.host}")
     private String imapHost;
@@ -80,6 +80,7 @@ public class GmailService {
             emailVO.setMailSubject(subject);
             emailVO.setSenderEmailAddress(from);
             emailVO.setMessage(message);
+            emailVO.setCcMailRecipients(message.getRecipients(Message.RecipientType.CC));
             extractAttachmentsFromMail(emailVO,message);
             result.add(emailVO);
         }

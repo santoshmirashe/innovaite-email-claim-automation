@@ -19,8 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static com.sapiens.innovate.util.Utils.nullSafe;
-
 @Service
 @Slf4j
 public class ClaimService {
@@ -35,7 +33,7 @@ public class ClaimService {
     protected InnovaiteClaimRepository repository;
 
     @Autowired
-    protected GmailService gmailService;
+    protected EmailService emailService;
 
     @Autowired
     private AttachmentExtractorService attachmentExtractorService;
@@ -53,7 +51,7 @@ public class ClaimService {
      * Fetch unread emails, extract claim data, raise claims, and notify customers.
      */
     public String processClaims() throws MessagingException, IOException {
-        List<EmailVO> unreadEmails = gmailService.fetchUnreadEmails(1000);
+        List<EmailVO> unreadEmails = emailService.fetchUnreadEmails(1000);
 
         int successCount = 0;
         int failCount = 0;
@@ -90,8 +88,10 @@ public class ClaimService {
         claim.setCreatedDate(LocalDateTime.now());
         claim.setUpdateDate(LocalDateTime.now());
         try {
+            //Step-0: Extract data from email
+            String combinedText = buildCombinedEmailContent(email);
             // Step 1: Extract claim details using GPT
-            claimData = gptProcessor.analyzeMessage(email);
+            claimData = gptProcessor.analyzeMessage(combinedText);
 
             claim.setPolicyNumber(claimData.getPolicyNumber());
             claim.setClaimAmount(null != claimData.getClaimAmount() ? claimData.getClaimAmount().doubleValue():0);
@@ -113,7 +113,7 @@ public class ClaimService {
             // Step 3: Notify customer
             String subject = "Claim Received - Reference: " + claimResponse.getClaimNumber();
             String body = buildAcknowledgmentEmail(claimData, claimResponse);
-            gmailService.sendEmail(email.getSenderEmailAddress(), subject, body);
+            emailService.sendEmail(email.getSenderEmailAddress(), subject, body);
             claim.setSuccess(true);
             claim.setStatus("Under Review");
             claim.setClaimNumber(claimResponse.getClaimNumber());
@@ -231,7 +231,7 @@ public class ClaimService {
                         .append(att.getFilename()).append(" ---\n");
 
                 try {
-                    String extractedText = attachmentExtractorService.extractTextFromAttachment(
+                    String extractedText = attachmentExtractorService.extractText(
                             att.getContent(), att.getFilename());
                     if (extractedText == null || extractedText.isBlank()) {
                         combined.append("[No readable text extracted]\n\n");

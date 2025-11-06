@@ -45,52 +45,7 @@ public class GPTProcessorService {
 
     public ClaimDataVO analyzeMessage(EmailVO message) throws Exception {
         String prompt = buildEnhancedPrompt(message);
-
-        // Create the chat message sequence with few-shot examples
-        List<ChatRequestMessage> chatMessages = Arrays.asList(
-                new ChatRequestSystemMessage(getSystemPrompt()),
-                new ChatRequestUserMessage(getFewShotExample1()),
-                new ChatRequestAssistantMessage(getFewShotResponse1()),
-                new ChatRequestUserMessage(getFewShotExample2()),
-                new ChatRequestAssistantMessage(getFewShotResponse2()),
-                new ChatRequestUserMessage(getFewShotExample3()),
-                new ChatRequestAssistantMessage(getFewShotResponse3()),
-                new ChatRequestUserMessage(prompt)
-        );
-
-
-        OpenAiChatOptions options = new OpenAiChatOptions();
-        options.setTemperature(0.0);
-        options.setMaxCompletionTokens(1500);
-
-        // Invoke the Azure model
-        ChatCompletions chatCompletions = openAIClient.getChatCompletions(deploymentName, new ChatCompletionsOptions(chatMessages));
-
-        // Extract response text
-        String content = chatCompletions.getChoices().get(0).getMessage().getContent();
-        if (content == null || content.isEmpty()) {
-            throw new RuntimeException("AI response was empty or invalid");
-        }
-
-        log.debug("AI Response: {}", content);
-
-        // Clean response
-        content = cleanJsonResponse(content);
-
-        // Parse JSON
-        JsonNode node = mapper.readTree(content);
-
-        ClaimDataVO claimData = ClaimDataVO.builder()
-                .policyNumber(getText(node, "policyNumber"))
-                .contactName(getText(node, "policyHolderName"))
-                .contactPhone(getText(node, "contactNumber"))
-                .fromEmail(getText(node, "email"))
-                .claimAmount(Utils.parseBigDecimal(getText(node, "claimedAmount")))
-                .incidentDate(Utils.parseLocalDate(getText(node, "incidentDate")))
-                .claimDescription(getText(node, "description"))
-                .build();
-
-        return claimData;
+        return processPrompt(prompt);
     }
 
     private String getSystemPrompt() {
@@ -279,4 +234,82 @@ public class GPTProcessorService {
 
         return cleaned.trim();
     }
+
+    public ClaimDataVO analyzeMessage(String combinedTextWithBodyAndAttachments) throws Exception {
+        String prompt = buildEnhancedPromptFromCombinedText(combinedTextWithBodyAndAttachments);
+        return processPrompt(prompt);
+    }
+
+    private ClaimDataVO processPrompt(String prompt) throws Exception {
+        // Create the chat message sequence with few-shot examples
+        List<ChatRequestMessage> chatMessages = Arrays.asList(
+                new ChatRequestSystemMessage(getSystemPrompt()),
+                new ChatRequestUserMessage(getFewShotExample1()),
+                new ChatRequestAssistantMessage(getFewShotResponse1()),
+                new ChatRequestUserMessage(getFewShotExample2()),
+                new ChatRequestAssistantMessage(getFewShotResponse2()),
+                new ChatRequestUserMessage(getFewShotExample3()),
+                new ChatRequestAssistantMessage(getFewShotResponse3()),
+                new ChatRequestUserMessage(prompt)
+        );
+
+
+        OpenAiChatOptions options = new OpenAiChatOptions();
+        options.setTemperature(0.0);
+        options.setMaxCompletionTokens(1500);
+
+        // Invoke the Azure model
+        ChatCompletions chatCompletions = openAIClient.getChatCompletions(deploymentName, new ChatCompletionsOptions(chatMessages));
+
+        // Extract response text
+        String content = chatCompletions.getChoices().get(0).getMessage().getContent();
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("AI response was empty or invalid");
+        }
+
+        log.debug("AI Response: {}", content);
+
+        // Clean response
+        content = cleanJsonResponse(content);
+
+        // Parse JSON
+        JsonNode node = mapper.readTree(content);
+
+        ClaimDataVO claimData = ClaimDataVO.builder()
+                .policyNumber(getText(node, "policyNumber"))
+                .contactName(getText(node, "policyHolderName"))
+                .contactPhone(getText(node, "contactNumber"))
+                .fromEmail(getText(node, "email"))
+                .claimAmount(Utils.parseBigDecimal(getText(node, "claimedAmount")))
+                .incidentDate(Utils.parseLocalDate(getText(node, "incidentDate")))
+                .claimDescription(getText(node, "description"))
+                .build();
+
+        return claimData;
+    }
+
+    private String buildEnhancedPromptFromCombinedText(String combinedText) {
+        return String.format("""
+                Extract claim information from the following text which contains data from both email and attachments.
+                Return ONLY valid JSON with these exact keys (use null for missing fields):
+                
+                Required fields:
+                - policyNumber (string) - Look for policy number, policy ID, or any reference number
+                - policyHolderName (string) - Customer's full name
+                - contactNumber (string) - Phone number in any format
+                - email (string) - Email address
+                - incidentDate (string) - Date in YYYY-MM-DD format
+                - claimedAmount (number or null) - Claimed/estimated damage amount
+                - description (string) - Brief summary of the incident
+                
+                Optional:
+                - sumInsured (number)
+                
+                Input Text:
+                %s
+
+                JSON Response:
+                """, combinedText);
+    }
+
 }

@@ -2,7 +2,7 @@ package com.sapiens.innovate.controller;
 
 
 import com.sapiens.innovate.service.ClaimService;
-import com.sapiens.innovate.service.GmailService;
+import com.sapiens.innovate.service.EmailService;
 import com.sapiens.innovate.service.SampleService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class EmailController {
     @Autowired
     private ClaimService claimService;
     @Autowired
-    private GmailService emailService;
+    private EmailService emailService;
 
     @Autowired
     private SampleService sampleService;
@@ -36,7 +36,7 @@ public class EmailController {
 
     @GetMapping("/run-ai-service")
     public void runAIService(){
-        sampleService.runSampleService();
+       // sampleService.runSampleService();
     }
 
     @PostMapping("/ask-any-thing")
