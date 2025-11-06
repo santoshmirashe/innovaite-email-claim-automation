@@ -1,9 +1,121 @@
 <!DOCTYPE html>
-<html>
-<head><title>Home</title></head>
-<body>
-<h2>Welcome back!</h2>
-<p>Logged in successfully.</p>
-</body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Statistics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background: #f7f9fc;
+    }
 
+    h2 {
+      margin-bottom: 20px;
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      color: #222;
+      text-align: center;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 90%;
+      max-width: 700px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 1.2rem;
+      }
+      .chart-container {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<h2>Insurance Claim Overview</h2>
+
+<div class="chart-container">
+    <canvas id="claimChart"></canvas>
+</div>
+
+<script>
+    async function fetchClaimStats() {
+      try {
+        const response = await fetch('/api/claim-stats');
+        if (!response.ok) throw new Error('Failed to fetch claim stats');
+        const data = await response.json();
+        renderChart(data);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        document.querySelector('h2').textContent = '⚠️ Failed to load claim data';
+      }
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('claimChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Emails', 'Successful', 'Failed'],
+          datasets: [{
+            label: 'Number of Claims',
+            data: [data.created, data.success, data.failed],
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 99, 132, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          aspectRatio: 2,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 10
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+    }
+
+    fetchClaimStats();
+  </script>
+</body>
 </html>

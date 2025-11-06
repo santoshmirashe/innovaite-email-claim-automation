@@ -1,5 +1,7 @@
 package com.sapiens.innovate.service;
 
+import com.sapiens.innovate.entity.InnovaiteClaim;
+import com.sapiens.innovate.repository.InnovaiteClaimRepository;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
 import com.sapiens.innovate.vo.EmailVO;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -20,7 +24,8 @@ public class ClaimService {
 
     @Autowired
     protected GPTProcessorService gptProcessor;
-
+    @Autowired
+    protected InnovaiteClaimRepository repository;
     @Autowired
     protected GmailService gmailService;
 
@@ -73,29 +78,50 @@ public class ClaimService {
      * Process a single email with error handling and retry queue
      */
     private void processSingleEmail(EmailVO email) throws Exception {
+        InnovaiteClaim claim = new InnovaiteClaim();
         ClaimDataVO claimData = null;
+        claim.setEmailContent(email.getMailBody());
+        claim.setSenderEmail(email.getSenderEmailId());
+        claim.setSuccess(false);
+        claim.setStatus("PENDING");
+        claim.setCreatedDate(LocalDateTime.now());
+        claim.setUpdateDate(LocalDateTime.now());
+        try {
+            // Step 1: Extract claim details using GPT
+            claimData = gptProcessor.analyzeMessage(email);
 
-        // Step 1: Extract claim details using GPT
-        claimData = gptProcessor.analyzeMessage(email);
+            claim.setPolicyNumber(claimData.getPolicyNumber());
+            claim.setClaimAmount(null != claimData.getClaimAmount() ? claimData.getClaimAmount().doubleValue():0);
+            claim.setPhone(claimData.getContactPhone());
+            claim.setCustomerName(claimData.getContactName());
 
-        // Validate extracted data
-        validateClaimData(claimData, email);
+            // Validate extracted data
+            validateClaimData(claimData, email);
 
-        // Step 2: Raise the claim
-        //log.info("Raising claim for policy: {}", claimData.getPolicyNumber());
-        ClaimResponseVO claimResponse = raiseClaim(claimData);
+            // Step 2: Raise the claim
+            //log.info("Raising claim for policy: {}", claimData.getPolicyNumber());
+            claim.setRequest(claimData.toString());
+            ClaimResponseVO claimResponse = raiseClaim(claimData);
 
-        if (claimResponse == null || claimResponse.getClaimNumber() == null) {
-            throw new RuntimeException("Claim service returned invalid response");
+            if (claimResponse == null || claimResponse.getClaimNumber() == null) {
+                throw new RuntimeException("Claim service returned invalid response");
+            }
+
+            // Step 3: Notify customer
+            String subject = "Claim Received - Reference: " + claimResponse.getClaimNumber();
+            String body = buildAcknowledgmentEmail(email, claimData, claimResponse);
+            gmailService.sendEmail(email.getSenderEmailId(), subject, body);
+            claim.setSuccess(true);
+            claim.setStatus("Under Review");
+            claim.setClaimNumber(claimResponse.getClaimNumber());
+            claim.setResponse(claimResponse.toString());
+            claim.setProcessed("PROCESSED");
+            log.info("Successfully processed claim: {}", claimResponse.getClaimNumber());
+        }catch(Exception exception) {
+            log.error(exception.getMessage());
+        }finally {
+            repository.save(claim);
         }
-
-        // Step 3: Notify customer
-        String subject = "Claim Received - Reference: " + claimResponse.getClaimNumber();
-        String body = buildAcknowledgmentEmail(email, claimData, claimResponse);
-        gmailService.sendEmail(email.getSenderEmailId(), subject, body);
-
-        log.info("Successfully processed claim: {}", claimResponse.getClaimNumber());
-
     }
 
     /**
@@ -173,6 +199,17 @@ public class ClaimService {
                         P&C Claims Team
                         """,
                 errorMessage
+        );
+    }
+
+    public Map<String, Long> getStatistics(){
+        long totalEmailsProcessed = repository.getTotalClaims();
+        long successfullyProcessedEmails = repository.getTotalSuccessClaims();
+        long failedToProcessEmails = repository.getTotalFailedClaims();
+        return Map.of(
+                "created", totalEmailsProcessed,
+                "success", successfullyProcessedEmails,
+                "failed", failedToProcessEmails
         );
     }
 }
