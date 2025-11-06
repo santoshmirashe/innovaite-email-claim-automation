@@ -251,7 +251,7 @@ public class GPTProcessorService {
                 %s
                 
                 JSON Response:""",
-                message.getSubject() != null ? message.getSubject() : "No Subject",
+                message.getMailSubject() != null ? message.getMailSubject() : "No Subject",
                 message.getMailBody() != null ? message.getMailBody() : "Empty Body"
         );
     }

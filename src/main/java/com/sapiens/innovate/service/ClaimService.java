@@ -2,6 +2,7 @@ package com.sapiens.innovate.service;
 
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.repository.InnovaiteClaimRepository;
+import com.sapiens.innovate.util.Utils;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
 import com.sapiens.innovate.vo.EmailVO;
@@ -18,24 +19,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static com.sapiens.innovate.util.Utils.nullSafe;
+
 @Service
 @Slf4j
 public class ClaimService {
 
-    @Autowired
-    protected GPTProcessorService gptProcessor;
-    @Autowired
-    protected InnovaiteClaimRepository repository;
-    @Autowired
-    protected GmailService gmailService;
-
     @Value("${claim.service.url}")
     private String claimServiceUrl;
 
-/*
     @Autowired
-    private FailedClaimQueueService failedClaimQueue;
-*/
+    protected GPTProcessorService gptProcessor;
+
+    @Autowired
+    protected InnovaiteClaimRepository repository;
+
+    @Autowired
+    protected GmailService gmailService;
+
+    @Autowired
+    private AttachmentExtractorService attachmentExtractorService;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -63,7 +66,7 @@ public class ClaimService {
 
             } catch (Exception e) {
                 log.error("Error processing email from: {}. Error: {}",
-                        email.getSenderEmailId(), e.getMessage(), e);
+                        email.getSenderEmailAddress(), e.getMessage(), e);
                 failCount++;
 
                 // Don't mark as read so it can be retried
@@ -81,7 +84,7 @@ public class ClaimService {
         InnovaiteClaim claim = new InnovaiteClaim();
         ClaimDataVO claimData = null;
         claim.setEmailContent(email.getMailBody());
-        claim.setSenderEmail(email.getSenderEmailId());
+        claim.setSenderEmail(email.getSenderEmailAddress());
         claim.setSuccess(false);
         claim.setStatus("PENDING");
         claim.setCreatedDate(LocalDateTime.now());
@@ -109,8 +112,8 @@ public class ClaimService {
 
             // Step 3: Notify customer
             String subject = "Claim Received - Reference: " + claimResponse.getClaimNumber();
-            String body = buildAcknowledgmentEmail(email, claimData, claimResponse);
-            gmailService.sendEmail(email.getSenderEmailId(), subject, body);
+            String body = buildAcknowledgmentEmail(claimData, claimResponse);
+            gmailService.sendEmail(email.getSenderEmailAddress(), subject, body);
             claim.setSuccess(true);
             claim.setStatus("Under Review");
             claim.setClaimNumber(claimResponse.getClaimNumber());
@@ -146,11 +149,11 @@ public class ClaimService {
 
         // Set email if not extracted
         if (claimData.getFromEmail() == null) {
-            claimData.setFromEmail(email.getSenderEmailId());
+            claimData.setFromEmail(email.getSenderEmailAddress());
         }
     }
 
-    private String buildAcknowledgmentEmail(EmailVO email, ClaimDataVO claimData, ClaimResponseVO claimResponse) {
+    private String buildAcknowledgmentEmail(ClaimDataVO claimData, ClaimResponseVO claimResponse) {
         return String.format("""
                         Dear %s,
 
@@ -212,4 +215,37 @@ public class ClaimService {
                 "failed", failedToProcessEmails
         );
     }
+
+    public String buildCombinedEmailContent(EmailVO email) {
+        StringBuilder combined = new StringBuilder();
+
+        // Add subject and body
+        combined.append("Subject: ").append(Utils.nullSafe(email.getMailSubject())).append("\n\n");
+        combined.append("Body:\n").append(Utils.nullSafe(email.getMailBody())).append("\n\n");
+
+        //Add attachment text (if any)
+        if (email.getAttachments() != null && !email.getAttachments().isEmpty()) {
+            int index = 1;
+            for (EmailVO.EmailAttachment att : email.getAttachments()) {
+                combined.append("--- Attachment ").append(index++).append(": ")
+                        .append(att.getFilename()).append(" ---\n");
+
+                try {
+                    String extractedText = attachmentExtractorService.extractTextFromAttachment(
+                            att.getContent(), att.getFilename());
+                    if (extractedText == null || extractedText.isBlank()) {
+                        combined.append("[No readable text extracted]\n\n");
+                    } else {
+                        combined.append(extractedText.trim()).append("\n\n");
+                    }
+                } catch (Exception e) {
+                    combined.append("[Error extracting text from attachment: ")
+                            .append(e.getMessage()).append("]\n\n");
+                }
+            }
+        }
+
+        return combined.toString();
+    }
+
 }
