@@ -102,11 +102,6 @@
 			<artifactId>microsoft-graph</artifactId>
 			<version>5.26.0</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.ai</groupId>-->
-<!--			<artifactId>spring-ai-openai</artifactId>-->
-<!--			<version>1.0.3</version>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>com.azure</groupId>
 			<artifactId>azure-ai-openai</artifactId>
@@ -121,8 +116,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
-		<!-- ✅ Microsoft SQL Server JDBC Driver -->
+		<!-- Microsoft SQL Server JDBC Driver -->
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
@@ -132,6 +126,18 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>3.5.5</version>
+		</dependency>
+		<!-- Core Tika library -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>3.2.3</version>   <!-- or latest -->
+		</dependency>
+		<!-- Standard parsers (PDF, DOCX, images, etc.) -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers-standard-package</artifactId>
+			<version>3.2.3</version>
 		</dependency>
 	</dependencies>
 	<repositories>

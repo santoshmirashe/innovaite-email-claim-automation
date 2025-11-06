@@ -36,4 +36,8 @@ public class Utils {
             }
         }
     }
+
+    public static String nullSafe(String val) {
+        return val == null ? "" : val;
+    }
 }
