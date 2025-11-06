@@ -102,7 +102,7 @@ public class GPTProcessorService {
                 1. Return ONLY valid JSON - no markdown, no code blocks, no explanations
                 2. Extract information accurately from the email text
                 3. Use null for missing fields - never make up information
-                4. Parse dates in YYYY-MM-DD format
+                4. Parse dates in YYYY-MM-DD format. Interpret relative terms like “today”, “yesterday”, or “last Monday” based on the current date context.
                 5. Extract monetary amounts as numbers without currency symbols
                 6. Be flexible with field names - customers may describe things differently
                 7. Look for policy numbers in various formats (POL123, P-123456, etc.)
