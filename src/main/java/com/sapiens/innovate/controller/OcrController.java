@@ -26,18 +26,24 @@ public class OcrController {
     protected ClaimService claimService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ClaimResponseVO> uploadAndExtract(@RequestParam("file") MultipartFile file) {
-        ClaimResponseVO claimResponseVO = new ClaimResponseVO();
+    public ResponseEntity<String> uploadAndExtract(@RequestParam("file") MultipartFile file) {
+        StringBuilder returnVal = new StringBuilder();
         try {
             File convFile = new File(System.getProperty("java.io.tmpdir") + file.getOriginalFilename());
             file.transferTo(convFile);
             String text = ocrService.extractTextFromFile(convFile);
             ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
-            claimService.raiseClaim(claimDataVO);
-            return ResponseEntity.ok(claimResponseVO);
+            ClaimResponseVO claimResponseVO = claimService.raiseClaim(claimDataVO);
+            if(claimResponseVO.getClaimNumber()!=null){
+                returnVal.append("Claim created successfully : "+claimResponseVO.getClaimNumber());
+            }else{
+                returnVal.append("Failed to create claim, try again after sometime!!!");
+            }
+            return ResponseEntity.ok(returnVal.toString());
         } catch (Exception e) {
+            returnVal.append("Failed to create claim, with error ").append(e.getMessage()).append(". Try again after sometime!!!");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(claimResponseVO);
+                    .body(returnVal.toString());
         }
     }
 }
