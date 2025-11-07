@@ -22,7 +22,7 @@ public class OcrController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAndExtract(@RequestParam("file") MultipartFile file) {
         try {
-            File convFile = new File("C:\\Santosh\\Test" + "\\" + file.getOriginalFilename());
+            File convFile = new File(System.getProperty("java.io.tmpdir") + file.getOriginalFilename());
             file.transferTo(convFile);
             String text = ocrService.extractText(convFile);
             return ResponseEntity.ok(text);
