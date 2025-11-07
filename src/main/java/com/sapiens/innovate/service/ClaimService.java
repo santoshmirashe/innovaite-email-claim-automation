@@ -249,4 +249,31 @@ public class ClaimService {
         return combined.toString();
     }
 
+    public InnovaiteClaim saveDetailsToDB(ClaimDataVO claimDataVO,String content){
+        InnovaiteClaim innovaiteClaim = new InnovaiteClaim();
+        innovaiteClaim.setEmailContent(content);
+        innovaiteClaim.setSuccess(false);
+        innovaiteClaim.setStatus("PENDING");
+        innovaiteClaim.setProcessed("PENDING");
+        innovaiteClaim.setCreatedDate(LocalDateTime.now());
+        innovaiteClaim.setUpdateDate(LocalDateTime.now());
+        innovaiteClaim.setPolicyNumber(claimDataVO.getPolicyNumber());
+        innovaiteClaim.setClaimAmount(null != claimDataVO.getClaimAmount() ? claimDataVO.getClaimAmount().doubleValue():0);
+        innovaiteClaim.setPhone(claimDataVO.getContactPhone());
+        innovaiteClaim.setCustomerName(claimDataVO.getContactName());
+        innovaiteClaim.setRequest(claimDataVO.toString());
+        repository.save(innovaiteClaim);
+        return innovaiteClaim;
+    }
+
+    public InnovaiteClaim updateClaimInDB(InnovaiteClaim innovaiteClaim ,ClaimResponseVO claimResponse){
+        innovaiteClaim.setSuccess(true);
+        innovaiteClaim.setStatus("Under Review");
+        innovaiteClaim.setClaimNumber(claimResponse.getClaimNumber());
+        innovaiteClaim.setResponse(claimResponse.toString());
+        innovaiteClaim.setProcessed("PROCESSED");
+        repository.save(innovaiteClaim);
+        return innovaiteClaim;
+    }
+
 }
