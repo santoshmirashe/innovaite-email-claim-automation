@@ -221,7 +221,7 @@
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
-#filterBtn {
+#filterBtn,#refreshBtn {
   height: 38px;
   padding: 0 1rem;
   background-color: #2563eb;
@@ -237,7 +237,7 @@
   gap: 0.4rem;
   transition: background 0.2s ease, transform 0.1s ease;
 }
-#filterBtn:hover {
+#filterBtn:hover,#refreshBtn:hover {
   background-color: #1e40af;
   transform: translateY(-1px);
 }
@@ -314,7 +314,7 @@
 
 <main>
     <section id="panel-reports" style="width:100%;">
-        <div style="padding:2rem;text-align:center">
+        <div style="text-align:center">
             <h2>Claim Statistics Overview</h2>
 
             <div class="filter-bar">
@@ -327,6 +327,7 @@
                     <input type="date" id="toDate"/>
                 </div>
                 <button id="filterBtn">🔍 Filter</button>
+                <button id="refreshBtn" onclick="fetchClaimStats()">🔄 Refresh</button>
             </div>
 
             <div style="width:95%;max-width:800px;margin:0 auto;background:#fff;padding:1.5rem 2rem;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">
@@ -334,7 +335,6 @@
                 <div class="chart-container">
                     <canvas id="claimChart"></canvas>
                 </div>
-                <button onclick="fetchClaimStats()" style="margin-top:1.5rem;">🔄 Refresh</button>
             </div>
         </div>
     </section>
