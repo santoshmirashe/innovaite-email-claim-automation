@@ -1,165 +1,197 @@
 <!doctype html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Email-Claim Automation — Home</title>
+  <title>Email-Claim Automation — Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
+    /* === BASE THEME === */
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1e40af;
-      --gray: #f3f4f6;
-      --text: #111827;
+      --gradient-1: linear-gradient(135deg, #4f46e5, #06b6d4, #9333ea);
+      --gradient-2: linear-gradient(135deg, #1e293b, #0f172a);
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(255, 255, 255, 0.2);
+      --text-light: #f1f5f9;
+      --text-dim: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #8b5cf6;
     }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background-color: var(--gray);
-      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at 25% 25%, #1e293b, #0f172a);
+      color: var(--text-light);
+      overflow-x: hidden;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      animation: gradientMove 15s ease infinite;
+      background-size: 300% 300%;
     }
 
-    /* --- HEADER LAYOUT --- */
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* === HEADER === */
     header {
-      background: #1e293b;
-      color: #fff;
-      padding: 0.8rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      padding: 1rem 2rem;
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      z-index: 10;
     }
 
-    .header-left h1 {
-      margin: 0;
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
-    .header-right {
+    .logo span {
+      color: #a5f3fc;
+    }
+
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
 
     .profile {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
       background: rgba(255, 255, 255, 0.15);
-      padding: 0.4rem 0.9rem;
-      border-radius: 0.5rem;
-      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
       font-weight: 500;
-      letter-spacing: 0.2px;
     }
 
     .logout-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      padding: 0.45rem 0.9rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.6rem 1.3rem;
       font-weight: 500;
-      font-size: 0.9rem;
-      transition: all 0.25s ease;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
     .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.5);
-      transform: translateY(-1px);
+      background: white;
+      color: #1e293b;
+      transform: translateY(-2px);
     }
 
-    /* --- NAVIGATION --- */
+    /* === NAVIGATION === */
     nav {
-      background: #fff;
       display: flex;
       justify-content: center;
       gap: 1rem;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 1rem;
     }
 
     .nav-item {
-      padding: 0.6rem 1rem;
-      border-radius: 0.5rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 1.5rem;
+      font-weight: 600;
+      color: var(--text-dim);
       cursor: pointer;
-      font-weight: 500;
-      color: var(--text);
-      transition: background 0.2s ease, color 0.2s ease;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
     }
 
     .nav-item.active {
-      background: var(--primary);
-      color: #fff;
+      background: var(--accent);
+      color: #0f172a;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
     }
 
     main {
       flex: 1;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       padding: 2rem;
     }
 
-    .upload-card {
-      background: white;
-      padding: 2rem;
+    /* === DASHBOARD PANEL === */
+    .panel {
+      width: 95%;
+      max-width: 1100px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
       border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      width: 400px;
-      text-align: center;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-glow);
+      padding: 2rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
-      margin-bottom: 1.2rem;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .file-label {
-      display: inline-block;
-      background: var(--primary);
+      text-align: center;
       color: white;
-      padding: 0.8rem 1.5rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s ease;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
     }
 
-    .file-label:hover {
-      background: var(--primary-dark);
+    /* === CHART === */
+    #claimChart {
+      width: 100%;
+      height: 420px;
+      margin-top: 1rem;
     }
 
-    #uploadBtn {
-      margin-top: 1.2rem;
-      background: var(--primary-dark);
+    /* === FILE UPLOAD === */
+    .upload-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      width: 400px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .file-label, #uploadBtn {
+      background: var(--accent-2);
+      color: white;
+      padding: 0.8rem 1.6rem;
       border: none;
-      color: white;
-      padding: 0.8rem 1.5rem;
-      border-radius: 0.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
       cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s ease;
+      transition: transform 0.3s ease, background 0.3s ease;
     }
 
-    #uploadBtn:hover {
-      background: var(--primary);
+    .file-label:hover, #uploadBtn:hover {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+
+    #fileName {
+      margin-top: 0.8rem;
+      color: var(--text-dim);
     }
 
     #progressBar {
@@ -167,7 +199,7 @@
       width: 100%;
       height: 8px;
       border-radius: 4px;
-      background: #d1d5db;
+      background: rgba(255, 255, 255, 0.2);
       overflow: hidden;
       display: none;
     }
@@ -175,90 +207,57 @@
     #progressBar div {
       height: 100%;
       width: 0;
-      background: var(--primary);
-      transition: width 0.3s;
-    }
-
-    #result {
-      margin-top: 1.5rem;
-      background: #f9fafb;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      text-align: left;
-      white-space: pre-wrap;
-      max-height: 300px;
-      overflow-y: auto;
-      font-size: 0.9rem;
-    }
-
-    #panel-reports {
-      width: 100%;
+      background: var(--accent);
+      transition: width 0.4s;
     }
 
     footer {
-      background: #1e293b;
-      color: #fff;
       text-align: center;
-      padding: 0.8rem;
+      padding: 1rem;
+      color: var(--text-dim);
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <div class="header-left">
-    <h1>Email-Claim <span style="color:#93c5fd;">Automation</span></h1>
-  </div>
-
-  <div class="header-right">
-    <div class="profile">
-      👤 <span sec:authentication="name">User</span>
-    </div>
+  <div class="logo">Email-Claim <span>Automation</span></div>
+  <div class="header-actions">
+    <div class="profile">👤 <span sec:authentication="name">User</span></div>
     <form th:action="@{/logout}" method="post" style="margin:0;">
-      <button type="submit" class="logout-btn">
-        <span>🚪 Logout</span>
-      </button>
+      <button class="logout-btn">Logout</button>
     </form>
   </div>
 </header>
 
-<!-- NAV -->
 <nav>
-  <div id="nav-reports" class="nav-item active">Reports</div>
-  <div id="nav-upload" class="nav-item">File Upload</div>
+  <div id="nav-reports" class="nav-item active">📊 Dashboard</div>
+  <div id="nav-upload" class="nav-item">📁 Upload File</div>
 </nav>
 
-<!-- MAIN CONTENT -->
 <main>
-  <!-- Reports Section -->
-  <section id="panel-reports" style="width:100%;">
-    <div style="padding:2rem;text-align:center">
-      <h2 style="color:#1e293b">Claim Statistics Overview</h2>
-      <div style="width:95%;max-width:800px;margin:0 auto;background:#fff;padding:1.5rem 2rem;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">
-        <div id="loading" style="color:#64748b;font-size:1rem">Fetching latest data...</div>
-        <canvas id="claimChart" style="display:none;width:100%;height:400px"></canvas>
-      </div>
-    </div>
+  <!-- Reports -->
+  <section id="panel-reports" class="panel">
+    <h2>📈 Claim Statistics Overview</h2>
+    <div id="loading" style="text-align:center;color:#94a3b8;">Loading data...</div>
+    <canvas id="claimChart" style="display:none;"></canvas>
   </section>
 
-  <!-- Upload Section -->
+  <!-- Upload -->
   <section id="panel-upload" class="upload-card" style="display:none;">
-    <h2>📄 Create claim from file (*.pdf,*.docx,*.png,*.jpg,*.jpeg)</h2>
-    <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx" />
+    <h2>Upload & Create Claim</h2>
+    <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx" hidden />
     <label for="fileInput" class="file-label">Choose File</label>
     <div id="fileName"></div>
-    <button id="uploadBtn">Upload & Create Claim</button>
+    <button id="uploadBtn" style="margin-top:1rem;">Upload Now</button>
     <div id="progressBar"><div></div></div>
-    <div id="result"></div>
+    <div id="result" style="margin-top:1.5rem;text-align:left;white-space:pre-wrap;"></div>
   </section>
 </main>
 
-<!-- FOOTER -->
-<footer>© 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon</footer>
+<footer>© 2025 Email-Claim Automation | Designed with 💜 for InnovAIte</footer>
 
-<!-- SCRIPT -->
 <script>
   const navUpload = document.getElementById('nav-upload');
   const navReports = document.getElementById('nav-reports');
@@ -280,7 +279,6 @@
     fetchClaimStats();
   });
 
-  // Upload Logic
   const fileInput = document.getElementById('fileInput');
   const fileName = document.getElementById('fileName');
   const uploadBtn = document.getElementById('uploadBtn');
@@ -289,19 +287,16 @@
   const resultDiv = document.getElementById('result');
 
   fileInput.addEventListener('change', () => {
-    fileName.textContent = fileInput.files.length > 0 ? 'Selected: ' + fileInput.files[0].name : '';
+    fileName.textContent = fileInput.files.length ? '📄 ' + fileInput.files[0].name : '';
   });
 
   uploadBtn.addEventListener('click', () => {
-    if (fileInput.files.length === 0) {
-      alert('Please select a file first.');
+    if (!fileInput.files.length) {
+      alert('Please select a file.');
       return;
     }
-
-    const file = fileInput.files[0];
     const formData = new FormData();
-    formData.append('file', file);
-
+    formData.append('file', fileInput.files[0]);
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/ocr', true);
 
@@ -310,10 +305,9 @@
       progressBarFill.style.width = '0%';
     });
 
-    xhr.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable) {
-        const percent = (event.loaded / event.total) * 100;
-        progressBarFill.style.width = percent + '%';
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        progressBarFill.style.width = (e.loaded / e.total * 100) + '%';
       }
     });
 
@@ -322,10 +316,7 @@
       progressBarFill.style.width = '100%';
     };
 
-    xhr.onerror = () => {
-      resultDiv.textContent = 'Error uploading file.';
-    };
-
+    xhr.onerror = () => resultDiv.textContent = 'Error uploading file.';
     xhr.send(formData);
   });
 
@@ -334,13 +325,13 @@
     const chartEl = document.getElementById('claimChart');
     try {
       const response = await fetch('/api/claim-stats');
-      if (!response.ok) throw new Error('Failed to fetch claim stats');
+      if (!response.ok) throw new Error();
       const data = await response.json();
       loadingText.style.display = 'none';
       chartEl.style.display = 'block';
       renderChart(data);
-    } catch (err) {
-      loadingText.textContent = '⚠️ Unable to load claim data. Please try again.';
+    } catch {
+      loadingText.textContent = '⚠️ Failed to load data.';
     }
   }
 
@@ -351,25 +342,29 @@
       data: {
         labels: ['Total Emails', 'Successful', 'Failed'],
         datasets: [{
-          label: 'Number of Claims',
           data: [data.created, data.success, data.failed],
-          backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(239, 68, 68, 0.7)'],
-          borderColor: ['rgba(37, 99, 235, 1)', 'rgba(16, 185, 129, 1)', 'rgba(239, 68, 68, 1)'],
-          borderWidth: 1,
-          borderRadius: 6
+          backgroundColor: ['#38bdf8', '#10b981', '#ef4444'],
+          borderWidth: 0,
+          borderRadius: 10,
+          hoverBackgroundColor: ['#7dd3fc', '#34d399', '#f87171']
         }]
       },
       options: {
         responsive: true,
         scales: {
-          y: { beginAtZero: true, ticks: { stepSize: 10, color: '#475569' }, grid: { color: '#e2e8f0' } },
-          x: { ticks: { color: '#475569' }, grid: { color: 'transparent' } }
+          y: { beginAtZero: true, ticks: { color: '#cbd5e1' } },
+          x: { ticks: { color: '#cbd5e1' } }
         },
         plugins: {
           legend: { display: false },
-          tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#e2e8f0', padding: 10 }
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#f8fafc',
+            bodyColor: '#f1f5f9',
+            padding: 10
+          }
         },
-        animation: { duration: 1200, easing: 'easeOutQuart' }
+        animation: { duration: 1200, easing: 'easeOutElastic' }
       }
     });
   }
