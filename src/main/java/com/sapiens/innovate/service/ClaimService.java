@@ -36,7 +36,7 @@ public class ClaimService {
     protected EmailService emailService;
 
     @Autowired
-    private AttachmentExtractorService attachmentExtractorService;
+    private OcrService attachmentExtractorService;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -231,7 +231,7 @@ public class ClaimService {
                         .append(att.getFilename()).append(" ---\n");
 
                 try {
-                    String extractedText = attachmentExtractorService.extractText(
+                    String extractedText = attachmentExtractorService.extractTextFromByteStream(
                             att.getContent(), att.getFilename());
                     if (extractedText == null || extractedText.isBlank()) {
                         combined.append("[No readable text extracted]\n\n");

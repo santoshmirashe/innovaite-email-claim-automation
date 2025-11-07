@@ -24,7 +24,7 @@ public class OcrController {
         try {
             File convFile = new File(System.getProperty("java.io.tmpdir") + file.getOriginalFilename());
             file.transferTo(convFile);
-            String text = ocrService.extractText(convFile);
+            String text = ocrService.extractTextFromFile(convFile);
             return ResponseEntity.ok(text);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
