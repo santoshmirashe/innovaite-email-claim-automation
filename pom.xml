@@ -127,48 +127,6 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>3.5.5</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk18on</artifactId>
-			<version>1.81</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcutil-jdk18on -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcutil-jdk18on</artifactId>
-			<version>1.81</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk18on</artifactId>
-			<version>1.81</version>
-		</dependency>
-		<!-- OCR (Tesseract via Tess4J) -->
-		<dependency>
-			<groupId>net.sourceforge.tess4j</groupId>
-			<artifactId>tess4j</artifactId>
-			<version>5.4.0</version>
-		</dependency>
-		<!-- Core Tika library -->
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-core</artifactId>
-			<version>3.2.3</version>   <!-- or latest -->
-		</dependency>
-		<!-- Standard parsers (PDF, DOCX, images, etc.) -->
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parsers-standard-package</artifactId>
-			<version>3.2.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parser-ocr-module</artifactId>
-			<version>3.2.3</version>
-		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
