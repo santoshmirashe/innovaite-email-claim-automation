@@ -1,7 +1,10 @@
 package com.sapiens.innovate.controller;
 
+import com.sapiens.innovate.service.ClaimService;
 import com.sapiens.innovate.service.GPTProcessorService;
 import com.sapiens.innovate.service.OcrService;
+import com.sapiens.innovate.vo.ClaimDataVO;
+import com.sapiens.innovate.vo.ClaimResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,17 +22,22 @@ public class OcrController {
     @Autowired
     protected GPTProcessorService gptProcessor;
 
+    @Autowired
+    protected ClaimService claimService;
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadAndExtract(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ClaimResponseVO> uploadAndExtract(@RequestParam("file") MultipartFile file) {
+        ClaimResponseVO claimResponseVO = new ClaimResponseVO();
         try {
             File convFile = new File(System.getProperty("java.io.tmpdir") + file.getOriginalFilename());
             file.transferTo(convFile);
             String text = ocrService.extractTextFromFile(convFile);
-
-            return ResponseEntity.ok(text);
+            ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
+            claimService.raiseClaim(claimDataVO);
+            return ResponseEntity.ok(claimResponseVO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error: " + e.getMessage());
+                    .body(claimResponseVO);
         }
     }
 }
