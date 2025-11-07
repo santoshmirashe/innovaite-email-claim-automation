@@ -6,17 +6,21 @@ import com.sapiens.innovate.service.GPTProcessorService;
 import com.sapiens.innovate.service.OcrService;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
 @RestController
-@RequestMapping("/api/ocr")
+@RequestMapping("/api")
+@Slf4j
 public class OcrController {
     @Autowired
     protected OcrService ocrService;
@@ -26,7 +30,7 @@ public class OcrController {
     @Autowired
     protected ClaimService claimService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/ocr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAndExtract(@RequestParam("file") MultipartFile file) {
         StringBuilder returnVal = new StringBuilder();
         try {
@@ -47,6 +51,39 @@ public class OcrController {
             returnVal.append("Failed to create claim, with error ").append(e.getMessage()).append(". Try again after sometime!!!");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(returnVal.toString());
+        }
+    }
+
+    @PostMapping(value = "/create-claim")
+    public ResponseEntity<?> createClaim(@Valid @RequestBody ClaimDataVO claimData, BindingResult bindingResult) {
+        StringBuilder returnVal = new StringBuilder();
+        // Handle validation errors
+        if (bindingResult.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            bindingResult.getFieldErrors().forEach(err ->
+                    errors.append(err.getField()).append(": ").append(err.getDefaultMessage()).append("; ")
+            );
+            log.warn("Validation failed: {}", errors);
+            return ResponseEntity.badRequest().body("Validation error(s): " + errors);
+        }
+
+        // Log incoming payload for debugging
+        log.info("Received new manual claim: {}", claimData);
+
+        try {
+            InnovaiteClaim innovaiteClaim = claimService.saveDetailsToDB(claimData,claimData.toString());
+            ClaimResponseVO claimResponseVO = claimService.raiseClaim(claimData);
+            if(claimResponseVO.getClaimNumber()!=null){
+                returnVal.append("Claim created successfully for policy: " + claimData.getPolicyNumber() +" ,Claim number : "+claimData.getPolicyNumber());
+            }else{
+                returnVal.append("Failed to create claim, try again after sometime!!!");
+            }
+            claimService.updateClaimInDB(innovaiteClaim,claimResponseVO);
+            return ResponseEntity.ok(returnVal.toString());
+        } catch (Exception ex) {
+            log.error("Error creating claim: ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create claim: " + ex.getMessage());
         }
     }
 }

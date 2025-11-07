@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Email-Claim Automation — Home</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <style>
     :root {
       --primary: #2563eb;
@@ -14,7 +14,6 @@
       --gray: #f3f4f6;
       --text: #111827;
     }
-
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
@@ -24,8 +23,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
-    /* --- HEADER LAYOUT --- */
     header {
       background: #1e293b;
       color: #fff;
@@ -35,20 +32,16 @@
       align-items: center;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
-
     .header-left h1 {
       margin: 0;
       font-size: 1.3rem;
       font-weight: 600;
-      letter-spacing: 0.3px;
     }
-
     .header-right {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
-
     .profile {
       display: flex;
       align-items: center;
@@ -58,9 +51,7 @@
       border-radius: 0.5rem;
       font-size: 0.9rem;
       font-weight: 500;
-      letter-spacing: 0.2px;
     }
-
     .logout-btn {
       display: flex;
       align-items: center;
@@ -75,14 +66,11 @@
       font-size: 0.9rem;
       transition: all 0.25s ease;
     }
-
     .logout-btn:hover {
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.5);
       transform: translateY(-1px);
     }
-
-    /* --- NAVIGATION --- */
     nav {
       background: #fff;
       display: flex;
@@ -91,7 +79,6 @@
       padding: 1rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
-
     .nav-item {
       padding: 0.6rem 1rem;
       border-radius: 0.5rem;
@@ -100,12 +87,10 @@
       color: var(--text);
       transition: background 0.2s ease, color 0.2s ease;
     }
-
     .nav-item.active {
       background: var(--primary);
       color: #fff;
     }
-
     main {
       flex: 1;
       display: flex;
@@ -113,8 +98,7 @@
       align-items: center;
       padding: 2rem;
     }
-
-    .upload-card {
+    .upload-card, .manual-card {
       background: white;
       padding: 2rem;
       border-radius: 1rem;
@@ -122,15 +106,13 @@
       width: 400px;
       text-align: center;
     }
-
     h2 {
       margin-bottom: 1.2rem;
+      color: #1e293b;
     }
-
     input[type="file"] {
       display: none;
     }
-
     .file-label {
       display: inline-block;
       background: var(--primary);
@@ -141,13 +123,10 @@
       font-weight: 500;
       transition: background 0.2s ease;
     }
-
     .file-label:hover {
       background: var(--primary-dark);
     }
-
-    #uploadBtn {
-      margin-top: 1.2rem;
+    button {
       background: var(--primary-dark);
       border: none;
       color: white;
@@ -157,44 +136,30 @@
       font-weight: 500;
       transition: background 0.2s ease;
     }
-
-    #uploadBtn:hover {
+    button:hover {
       background: var(--primary);
     }
-
-    #progressBar {
-      margin-top: 1rem;
-      width: 100%;
-      height: 8px;
-      border-radius: 4px;
-      background: #d1d5db;
-      overflow: hidden;
-      display: none;
-    }
-
-    #progressBar div {
-      height: 100%;
-      width: 0;
-      background: var(--primary);
-      transition: width 0.3s;
-    }
-
-    #result {
-      margin-top: 1.5rem;
-      background: #f9fafb;
-      padding: 1rem;
-      border-radius: 0.5rem;
+    .form-group {
+      margin-bottom: 1rem;
       text-align: left;
-      white-space: pre-wrap;
-      max-height: 300px;
-      overflow-y: auto;
-      font-size: 0.9rem;
     }
-
-    #panel-reports {
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    input, textarea {
       width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.4rem;
+      font-size: 0.9rem;
+      outline: none;
     }
-
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
     footer {
       background: #1e293b;
       color: #fff;
@@ -202,123 +167,132 @@
       padding: 0.8rem;
       font-size: 0.9rem;
     }
-    button:hover {
-      background-color: #1e40af;
-    }
     @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="header-left">
-    <h1>Email-Claim <span style="color:#93c5fd;">Automation</span></h1>
+    <h1>Email-Claim Automation <span style="color:#93c5fd;">Workbench</span></h1>
   </div>
-
   <div class="header-right">
-    <div class="profile">
-      👤 <span sec:authentication="name">User</span>
-    </div>
+    <div class="profile">👤 <span sec:authentication="name">User</span></div>
     <form th:action="@{/logout}" method="post" style="margin:0;">
-      <button type="submit" class="logout-btn">
-        <span>🚪 Logout</span>
-      </button>
+      <button type="submit" class="logout-btn">🚪 Logout</button>
     </form>
   </div>
 </header>
 
-<!-- NAV -->
 <nav>
   <div id="nav-reports" class="nav-item active">Reports</div>
-  <div id="nav-upload" class="nav-item">File Upload</div>
+  <div id="nav-upload" class="nav-item">Claim Upload</div>
+  <div id="nav-manual" class="nav-item">Create Claim Manually</div>
 </nav>
 
-<!-- MAIN CONTENT -->
 <main>
-  <!-- Reports Section -->
   <section id="panel-reports" style="width:100%;">
     <div style="padding:2rem;text-align:center">
-      <h2 style="color:#1e293b">Claim Statistics Overview</h2>
+      <h2>Claim Statistics Overview</h2>
       <div style="width:95%;max-width:800px;margin:0 auto;background:#fff;padding:1.5rem 2rem;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">
         <div id="loading" style="color:#64748b;font-size:1rem">Fetching latest data...</div>
         <canvas id="claimChart" style="display:none;width:100%;height:400px"></canvas>
-
-        <!-- Refresh button -->
-        <button
-                onclick="fetchClaimStats()"
-                style="margin-top:1.5rem;padding:0.6rem 1.2rem;font-size:1rem;
-               background-color:#2563eb;color:white;border:none;border-radius:8px;
-               cursor:pointer;transition:background-color 0.2s;">
-          🔄 Refresh
-        </button>
+        <button onclick="fetchClaimStats()" style="margin-top:1.5rem;">🔄 Refresh</button>
       </div>
     </div>
   </section>
 
-  <!-- Upload Section -->
   <section id="panel-upload" class="upload-card" style="display:none;">
-    <h2>📄 Create claim from file (*.pdf,*.docx,*.png,*.jpg,*.jpeg)</h2>
+    <h2>📄 Create claim from file</h2>
+    <h6>(*.pdf, *.docx, *.png, *.jpg, *.jpeg)</h6>
     <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx" />
     <label for="fileInput" class="file-label">Choose File</label>
     <div id="fileName"></div>
     <button id="uploadBtn">Upload & Create Claim</button>
-    <div id="progressBar"><div></div></div>
-    <div id="result"></div>
+    <div id="progressBar" style="margin-top:1rem;width:100%;height:8px;border-radius:4px;background:#d1d5db;overflow:hidden;display:none;">
+      <div style="height:100%;width:0;background:var(--primary);transition:width 0.3s;"></div>
+    </div>
+    <div id="result" style="margin-top:1.5rem;background:#f9fafb;padding:1rem;border-radius:0.5rem;text-align:left;white-space:pre-wrap;max-height:300px;overflow-y:auto;font-size:0.9rem;"></div>
   </section>
-  <!-- Mask overlay -->
-  <div id="mask" style="
-  display:none;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.3);
-  z-index:9999;
-  align-items:center;
-  justify-content:center;
-">
-    <div class="spinner" style="
-    width:60px;
-    height:60px;
-    border:6px solid #ccc;
-    border-top:6px solid #2563eb;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-  "></div>
+
+  <!-- MANUAL CLAIM FORM -->
+  <section id="panel-manual" class="manual-card" style="display:none;">
+    <h2>📝 Create Claim Manually</h2>
+    <form id="manualClaimForm">
+      <div class="form-group">
+        <label for="policyNumber">Policy Number *</label>
+        <input id="policyNumber" name="policyNumber" required />
+      </div>
+      <div class="form-group">
+        <label for="contactName">Contact Name *</label>
+        <input id="contactName" name="contactName" required />
+      </div>
+      <div class="form-group">
+        <label for="fromEmail">Contact Email *</label>
+        <input type="email" id="fromEmail" name="fromEmail" required />
+      </div>
+      <div class="form-group">
+        <label for="contactPhone">Contact Phone</label>
+        <input id="contactPhone" name="contactPhone" />
+      </div>
+      <div class="form-group">
+        <label for="claimDescription">Claim Description *</label>
+        <textarea id="claimDescription" name="claimDescription" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="incidentDate">Incident Date *</label>
+        <input type="date" id="incidentDate" name="incidentDate" required />
+      </div>
+      <div class="form-group">
+        <label for="claimAmount">Claim Amount</label>
+        <input type="number" step="0.01" id="claimAmount" name="claimAmount" />
+      </div>
+      <div class="form-group">
+        <label for="summary">Summary</label>
+        <textarea id="summary" name="summary" rows="2"></textarea>
+      </div>
+      <button type="submit">Submit Claim</button>
+    </form>
+    <div id="manualResult" style="margin-top:1rem;font-size:0.9rem;text-align:left;"></div>
+  </section>
+
+  <div id="mask" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.3);z-index:9999;align-items:center;justify-content:center;">
+    <div style="width:60px;height:60px;border:6px solid #ccc;border-top:6px solid #2563eb;border-radius:50%;animation:spin 1s linear infinite;"></div>
   </div>
 </main>
 
-<!-- FOOTER -->
 <footer>© 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon</footer>
 
-<!-- SCRIPT -->
 <script>
   const navUpload = document.getElementById('nav-upload');
   const navReports = document.getElementById('nav-reports');
+  const navManual = document.getElementById('nav-manual');
   const panelUpload = document.getElementById('panel-upload');
   const panelReports = document.getElementById('panel-reports');
+  const panelManual = document.getElementById('panel-manual');
 
-  navUpload.addEventListener('click', () => {
-    navUpload.classList.add('active');
-    navReports.classList.remove('active');
-    panelUpload.style.display = 'block';
-    panelReports.style.display = 'none';
+  const tabs = [
+    { nav: navReports, panel: panelReports },
+    { nav: navUpload, panel: panelUpload },
+    { nav: navManual, panel: panelManual }
+  ];
+
+  tabs.forEach(({ nav, panel }) => {
+    nav.addEventListener('click', () => {
+      tabs.forEach(({ nav, panel }) => {
+        nav.classList.remove('active');
+        panel.style.display = 'none';
+      });
+      nav.classList.add('active');
+      panel.style.display = 'block';
+      if (nav === navReports) fetchClaimStats();
+    });
   });
 
-  navReports.addEventListener('click', () => {
-    navReports.classList.add('active');
-    navUpload.classList.remove('active');
-    panelUpload.style.display = 'none';
-    panelReports.style.display = 'block';
-    fetchClaimStats();
-  });
-
-  // Upload Logic
+  // Upload logic
   const fileInput = document.getElementById('fileInput');
   const fileName = document.getElementById('fileName');
   const uploadBtn = document.getElementById('uploadBtn');
@@ -331,46 +305,58 @@
   });
 
   uploadBtn.addEventListener('click', () => {
-    if (fileInput.files.length === 0) {
-      alert('Please select a file first.');
-      return;
-    }
-
+    if (fileInput.files.length === 0) return alert('Please select a file first.');
+    document.getElementById("mask").style.display = "flex";
     const file = fileInput.files[0];
     const formData = new FormData();
     formData.append('file', file);
-
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/ocr', true);
-
-    xhr.upload.addEventListener('loadstart', () => {
-      progressBar.style.display = 'block';
-      progressBarFill.style.width = '0%';
-    });
-
     xhr.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
         const percent = (event.loaded / event.total) * 100;
+        progressBar.style.display = 'block';
         progressBarFill.style.width = percent + '%';
       }
     });
-
     xhr.onload = () => {
       resultDiv.textContent = xhr.status === 200 ? xhr.responseText : 'Error: ' + xhr.responseText;
-      progressBarFill.style.width = '100%';
+      document.getElementById("mask").style.display = "none";
     };
-
     xhr.onerror = () => {
       resultDiv.textContent = 'Error uploading file.';
+      document.getElementById("mask").style.display = "none";
     };
-
     xhr.send(formData);
   });
 
+  // Manual claim logic
+  document.getElementById('manualClaimForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById("mask").style.display = "flex";
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    payload.claimAmount = payload.claimAmount ? parseFloat(payload.claimAmount) : null;
+
+    try {
+      const res = await fetch('/api/create-claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      document.getElementById('manualResult').textContent =
+        res.ok ? `✅ Claim submitted successfully: ${text}` : `❌ Error: ${text}`;
+    } catch (err) {
+      document.getElementById('manualResult').textContent = '⚠️ Network error or invalid response.';
+    } finally {
+      document.getElementById("mask").style.display = "none";
+    }
+  });
+
+  // Chart logic
+  let chartInstance = null;
   async function fetchClaimStats() {
-  // Show mask
-  document.getElementById("mask").style.display = "flex";
-  document.getElementById("loading").textContent = "Refreshing data...";
+    document.getElementById("mask").style.display = "flex";
     const loadingText = document.getElementById('loading');
     const chartEl = document.getElementById('claimChart');
     try {
@@ -381,39 +367,30 @@
       chartEl.style.display = 'block';
       renderChart(data);
     } catch (err) {
-      loadingText.textContent = '⚠️ Unable to load claim data. Please try again.';
+      loadingText.textContent = '⚠️ Unable to load claim data.';
     } finally {
-    // Hide mask
-    document.getElementById("mask").style.display = "none";
-  }
+      document.getElementById("mask").style.display = "none";
+    }
   }
 
   function renderChart(data) {
     const ctx = document.getElementById('claimChart').getContext('2d');
-    new Chart(ctx, {
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Total Emails', 'Successful', 'Failed'],
+        labels: ['Total Created', 'Successful', 'Failed'],
         datasets: [{
-          label: 'Number of Claims',
+          label: 'Claims',
           data: [data.created, data.success, data.failed],
-          backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(239, 68, 68, 0.7)'],
-          borderColor: ['rgba(37, 99, 235, 1)', 'rgba(16, 185, 129, 1)', 'rgba(239, 68, 68, 1)'],
-          borderWidth: 1,
+          backgroundColor: ['rgba(37,99,235,0.7)', 'rgba(16,185,129,0.7)', 'rgba(239,68,68,0.7)'],
           borderRadius: 6
         }]
       },
       options: {
         responsive: true,
-        scales: {
-          y: { beginAtZero: true, ticks: { stepSize: 10, color: '#475569' }, grid: { color: '#e2e8f0' } },
-          x: { ticks: { color: '#475569' }, grid: { color: 'transparent' } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#e2e8f0', padding: 10 }
-        },
-        animation: { duration: 1200, easing: 'easeOutQuart' }
+        scales: { y: { beginAtZero: true } },
+        plugins: { legend: { display: false } }
       }
     });
   }
