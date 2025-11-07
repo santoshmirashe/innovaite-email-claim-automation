@@ -85,6 +85,7 @@ public class ClaimService {
         claim.setSenderEmail(email.getSenderEmailAddress());
         claim.setSuccess(false);
         claim.setStatus("PENDING");
+        claim.setProcessed("PENDING");
         claim.setCreatedDate(LocalDateTime.now());
         claim.setUpdateDate(LocalDateTime.now());
         try {
