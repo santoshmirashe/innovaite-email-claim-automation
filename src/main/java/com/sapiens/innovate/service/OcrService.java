@@ -25,7 +25,7 @@ public class OcrService {
                 PDDocument document = PDDocument.load(file);
                 PDFRenderer renderer = new PDFRenderer(document);
                 Tesseract tesseract = new Tesseract();
-                tesseract.setDatapath("C:\\Santosh\\softwares\\Tesseract-OCR\\tessdata");
+                tesseract.setDatapath("C:\\software\\Tesseract-OCR\\tessdata");
                 tesseract.setLanguage("eng");
                 for (int i = 0; i < document.getNumberOfPages(); i++) {
                     BufferedImage image = renderer.renderImageWithDPI(i, 300);
@@ -54,7 +54,7 @@ public class OcrService {
 
     private String extractWithTesseract(File file) throws Exception {
         ITesseract tesseract = new Tesseract();
-        tesseract.setDatapath("C:\\Santosh\\softwares\\Tesseract-OCR\\tessdata"); // path to tessdata
+        tesseract.setDatapath("C:\\software\\Tesseract-OCR\\tessdata"); // path to tessdata
         tesseract.setLanguage("eng");
         return tesseract.doOCR(file);
     }
