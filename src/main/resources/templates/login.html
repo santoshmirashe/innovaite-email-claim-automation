@@ -1,167 +1,138 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Email-Claim Automation — Login</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* Custom Tailwind Configuration */
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            /* Dashing Look: Dark, high-contrast background */
-            background-color: #0f172a; /* Slate-900 */
-        }
-        /* Header and Button Color Reference: Indigo-600 */
-        /* Gradient Header */
-        .header-gradient {
-            background-image: linear-gradient(to right, #4338ca, #4f46e5); /* Indigo-700 to Indigo-600 */
-        }
-        /* Custom input focus style */
-        input:focus {
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.5); /* Blue/Indigo Glow */
-            border-color: #6366f1; /* Indigo-500 */
-        }
-        /* Abstract shape background for visual interest (using a vibrant cyan accent) */
-        .main-background {
-            position: relative;
-            background-color: #0f172a; /* Slate-900 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main-background::before {
-            content: '';
-            position: absolute;
-            top: 5%;
-            left: 10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(6, 182, 212, 0.3); /* Cyan accent */
-            border-radius: 50%;
-            filter: blur(150px);
-            z-index: 0;
-            opacity: 0.5;
-            animation: move-blur-1 20s infinite alternate;
-        }
-        .main-background::after {
-            content: '';
-            position: absolute;
-            bottom: 5%;
-            right: 15%;
-            width: 400px;
-            height: 400px;
-            background: rgba(129, 140, 248, 0.3); /* Indigo accent */
-            border-radius: 50%;
-            filter: blur(130px);
-            z-index: 0;
-            opacity: 0.5;
-            animation: move-blur-2 25s infinite alternate;
-        }
-        /* Keyframes for subtle background animation */
-        @keyframes move-blur-1 {
-            0% { transform: translate(0, 0) scale(1.0); }
-            100% { transform: translate(50px, 30px) scale(1.05); }
-        }
-        @keyframes move-blur-2 {
-            0% { transform: translate(0, 0) scale(1.0); }
-            100% { transform: translate(-30px, -50px) scale(1.1); }
-        }
-        /* Shadow for the card to pop on the dark background */
-        .shadow-3xl {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
-        }
-    </style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --gray: #f3f4f6;
+      --text: #111827;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--gray);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1e293b;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 360px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    .error {
+      color: #dc2626;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background: #1e293b;
+      color: #fff;
+      text-align: center;
+      padding: 0.8rem;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
-
-<body class="min-h-screen flex flex-col antialiased">
-
-<!-- Header / Navigation Bar with Dark Gradient -->
-<header class="header-gradient shadow-xl z-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center text-white">
-        <!-- Logo/Title -->
-        <div class="flex items-center space-x-3">
-            <!-- SVG Icon: Inbox/Automation (white) -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 4v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 12a2 2 0 00-2-2H7a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7z"/>
-            </svg>
-            <h1 class="text-xl font-bold">Email-Claim <span class="text-cyan-300">Automation</span></h1>
-        </div>
-        <!-- Environment Tag -->
-        <span class="text-xs font-medium text-white bg-white/20 px-3 py-1 rounded-full border border-white/30 hidden sm:block">
-                Environment: Development
-            </span>
-    </div>
+<body>
+<header>
+    <h1>Email-Claim Automation</h1>
+    <small>Environment: Development</small>
 </header>
 
-<!-- Main Content Area (Login Form) with Abstract Background -->
-<main class="flex-grow main-background p-4">
-    <div class="w-full max-w-sm sm:max-w-md z-10">
-        <!-- Login Card - Now using a sleek, slightly dark card on the dark background -->
-        <div class="bg-white p-10 sm:p-12 rounded-3xl shadow-3xl border border-indigo-400/20 transition-all duration-300 hover:shadow-indigo-500/60 transform hover:-translate-y-1">
-            <div class="text-center">
-                <h2 class="text-4xl font-extrabold text-gray-900 mb-2">System Login</h2>
-                <p class="text-gray-500 mb-8">Ready to automate your claims?</p>
-            </div>
+<main>
+    <div class="login-card">
+        <h2>Login to Continue</h2>
 
-            <!-- Error/Status Messages -->
-            <!-- The Thymeleaf conditions are preserved for the backend logic -->
-            <div class="mb-6 text-center space-y-3">
-                <p class="text-red-700 bg-red-100 p-3 rounded-lg border border-red-300 font-medium text-sm"
-                <!-- th:if="${param.error}" -->
-                >
-                <span class="font-bold">Access Denied:</span> Invalid username or password.
-                </p>
-                <p class="text-green-700 bg-green-100 p-3 rounded-lg border border-green-300 font-medium text-sm"
-                <!-- th:if="${param.logout}" -->
-                >
-                You have been securely logged out.
-                </p>
-            </div>
+        <!-- Spring Security login form -->
+        <form th:action="@{/login}" method="post">
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
 
+            <!-- Spring Security automatically exposes this on failed login -->
+            <p class="error" th:if="${param.error}">Invalid username or password.</p>
+            <p class="error" th:if="${param.logout}">You’ve been logged out successfully.</p>
 
-            <!-- Login Form -->
-            <form action="/login" method="post" class="space-y-6">
-                <div>
-                    <label for="username" class="sr-only">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Username or Email" required
-                           class="w-full p-4 border-2 border-gray-300 rounded-xl placeholder-gray-500 text-base focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-                    />
-                </div>
-
-                <div>
-                    <label for="password" class="sr-only">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Password" required
-                           class="w-full p-4 border-2 border-gray-300 rounded-xl placeholder-gray-500 text-base focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-                    />
-                </div>
-
-                <button type="submit"
-                        class="w-full py-4 px-4 bg-indigo-600 text-white font-bold text-lg rounded-xl shadow-xl shadow-indigo-600/50 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/70 transition duration-200 transform hover:scale-[1.005] active:scale-[0.99]"
-                >
-                    Start Automation
-                </button>
-            </form>
-
-            <p class="mt-8 text-center text-sm text-gray-500">
-                <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500 transition duration-150 border-b border-indigo-300/0 hover:border-indigo-500">
-                    Forgot Password?
-                </a>
-            </p>
-        </div>
+            <button type="submit">Login</button>
+        </form>
     </div>
 </main>
 
-<!-- Footer -->
-<footer class="bg-gray-950 text-gray-400 text-center p-4 z-20 border-t border-indigo-900/50">
-    <div class="max-w-7xl mx-auto text-sm font-light">
-        © 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon
-    </div>
+<footer>
+    © 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon
 </footer>
-
 </body>
 </html>
