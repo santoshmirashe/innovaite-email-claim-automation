@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -206,10 +208,12 @@ public class ClaimService {
         );
     }
 
-    public Map<String, Long> getStatistics(){
-        long totalEmailsProcessed = repository.getTotalClaims();
-        long successfullyProcessedEmails = repository.getTotalSuccessClaims();
-        long failedToProcessEmails = repository.getTotalFailedClaims();
+    public Map<String, Long> getStatistics(LocalDate from, LocalDate to){
+        LocalDateTime fromDateTime = (from != null) ? from.atStartOfDay() : LocalDate.now().atStartOfDay();
+        LocalDateTime toDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
+        long totalEmailsProcessed = repository.getTotalClaims(fromDateTime,toDateTime);
+        long successfullyProcessedEmails = repository.getTotalSuccessClaims(fromDateTime,toDateTime);
+        long failedToProcessEmails = repository.getTotalFailedClaims(fromDateTime,toDateTime);
         return Map.of(
                 "created", totalEmailsProcessed,
                 "success", successfullyProcessedEmails,
