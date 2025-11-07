@@ -14,4 +14,8 @@ public class ScreenController {
     public String login() {
         return "login";
     }
+    @GetMapping("/")
+    public String loginn() {
+        return "login";
+    }
 }

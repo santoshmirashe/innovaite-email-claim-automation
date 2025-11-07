@@ -1,5 +1,6 @@
 package com.sapiens.innovate.controller;
 
+import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.service.ClaimService;
 import com.sapiens.innovate.service.GPTProcessorService;
 import com.sapiens.innovate.service.OcrService;
@@ -33,12 +34,14 @@ public class OcrController {
             file.transferTo(convFile);
             String text = ocrService.extractTextFromFile(convFile);
             ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
+            InnovaiteClaim innovaiteClaim = claimService.saveDetailsToDB(claimDataVO,text);
             ClaimResponseVO claimResponseVO = claimService.raiseClaim(claimDataVO);
             if(claimResponseVO.getClaimNumber()!=null){
                 returnVal.append("Claim created successfully : "+claimResponseVO.getClaimNumber());
             }else{
                 returnVal.append("Failed to create claim, try again after sometime!!!");
             }
+            claimService.updateClaimInDB(innovaiteClaim,claimResponseVO);
             return ResponseEntity.ok(returnVal.toString());
         } catch (Exception e) {
             returnVal.append("Failed to create claim, with error ").append(e.getMessage()).append(". Try again after sometime!!!");

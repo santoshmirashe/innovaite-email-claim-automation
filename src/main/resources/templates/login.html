@@ -119,8 +119,8 @@
 
         <!-- Spring Security login form -->
         <form th:action="@{/login}" method="post">
-            <input type="text" name="username" placeholder="Username" required />
-            <input type="password" name="password" placeholder="Password" required />
+            <input type="text" name="username"  value="admin" placeholder="Username" required />
+            <input type="password" name="password" value="admin123" placeholder="Password" required />
 
             <!-- Spring Security automatically exposes this on failed login -->
             <p class="error" th:if="${param.error}">Invalid username or password.</p>
