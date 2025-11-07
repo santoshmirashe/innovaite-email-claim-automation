@@ -261,7 +261,7 @@
 
   <!-- Upload Section -->
   <section id="panel-upload" class="upload-card" style="display:none;">
-    <h2>📄 Create claim from file (*.pdf,*.docx,*.png,*.jpg,*.jpeg)</h2>
+    <h2>📄 Create claim from file <h6>(*.pdf,*.docx,*.png,*.jpg,*.jpeg)</h6></h2>
     <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx" />
     <label for="fileInput" class="file-label">Choose File</label>
     <div id="fileName"></div>
@@ -336,6 +336,8 @@
       return;
     }
 
+    document.getElementById("mask").style.display = "flex";
+    document.getElementById("loading").textContent = "Uploading...";
     const file = fileInput.files[0];
     const formData = new FormData();
     formData.append('file', file);
@@ -358,10 +360,12 @@
     xhr.onload = () => {
       resultDiv.textContent = xhr.status === 200 ? xhr.responseText : 'Error: ' + xhr.responseText;
       progressBarFill.style.width = '100%';
+      document.getElementById("mask").style.display = "none";
     };
 
     xhr.onerror = () => {
       resultDiv.textContent = 'Error uploading file.';
+      document.getElementById("mask").style.display = "none";
     };
 
     xhr.send(formData);
