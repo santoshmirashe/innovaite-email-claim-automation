@@ -1,5 +1,7 @@
 package com.sapiens.innovate.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,5 +45,17 @@ public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, 
        """)
     long getTotalFailedClaims(@Param("from") LocalDateTime from,
                               @Param("to") LocalDateTime to);
+
+    @Query("""
+        SELECT c FROM InnovaiteClaim c
+        WHERE (:from IS NULL OR c.createdDate >= :from)
+          AND (:to IS NULL OR c.createdDate <= :to)
+        ORDER BY c.createdDate DESC
+    """)
+    Page<InnovaiteClaim> findClaims(
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to,
+            Pageable pageable
+    );
 
 }

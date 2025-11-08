@@ -1,6 +1,8 @@
 package com.sapiens.innovate.controller;
 
+import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.service.ClaimService;
+import com.sapiens.innovate.vo.PaginatedClaimResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,4 +40,22 @@ public class ClaimStatsController {
         Map<String, Long> stats = claimService.getStatistics(from, to);
         return ResponseEntity.ok(stats);
     }
+
+    @GetMapping("/api/claims-list")
+    public ResponseEntity<PaginatedClaimResponse> getClaimsList(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate from,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate to,
+
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(defaultValue = "10") Integer limit) {
+
+        PaginatedClaimResponse response = claimService.getClaimsPaginated(from, to, offset, limit);
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -3,13 +3,14 @@ package com.sapiens.innovate.service;
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.repository.InnovaiteClaimRepository;
 import com.sapiens.innovate.util.Utils;
-import com.sapiens.innovate.vo.ClaimDataVO;
-import com.sapiens.innovate.vo.ClaimResponseVO;
-import com.sapiens.innovate.vo.EmailVO;
+import com.sapiens.innovate.vo.*;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -220,6 +221,32 @@ public class ClaimService {
                 "failed", failedToProcessEmails
         );
     }
+
+    public PaginatedClaimResponse getClaimsPaginated(LocalDate from, LocalDate to, int offset, int limit) {
+        LocalDateTime fromDateTime = (from != null) ? from.atStartOfDay() : LocalDate.now().atStartOfDay();
+        LocalDateTime toDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
+
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        Page<InnovaiteClaim> page = repository.findClaims(fromDateTime, toDateTime, pageable);
+
+        List<ClaimDTO> claimDTOs = page.getContent().stream()
+                .map(c -> new ClaimDTO(
+                        c.getPolicyNumber(),
+                        c.getCustomerName(),
+                        c.getClaimNumber(),
+                        c.getCreatedDate(),
+                        c.getSuccess()
+                ))
+                .toList();
+
+        return new PaginatedClaimResponse(
+                claimDTOs,
+                page.getTotalElements(),
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+    }
+
 
     public String buildCombinedEmailContent(EmailVO email) {
         StringBuilder combined = new StringBuilder();

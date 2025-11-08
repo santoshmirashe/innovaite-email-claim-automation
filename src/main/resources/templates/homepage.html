@@ -337,6 +337,126 @@ margin-top: 20px;
 }
 
 
+  .report-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .chart-container,
+  .table-container {
+    flex: 1;
+    min-width: 420px;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    font-weight: 600;
+  }
+
+  tr:hover {
+    background-color: #f9fafb;
+  }
+
+  @media (max-width: 900px) {
+    .report-content {
+      flex-direction: column;
+    }
+  }
+  #panel-reports {
+    max-width: 2900px !important;
+    margin: 0 0 !important;
+  }
+  /* Force report-content to truly use full width and flex */
+#panel-reports .report-content {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 20px;
+  width: 100%;
+  max-width: 100% !important;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Chart and table containers share equal space */
+#panel-reports .chart-container,
+#panel-reports .table-container {
+  flex: 1 1 50%;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-width: 0; /* prevent flex overflow */
+}
+
+/* Ensure table scrolls horizontally if needed */
+#panel-reports .table-container {
+  overflow-x: auto;
+}
+
+/* Responsive fallback for smaller screens */
+@media (max-width: 992px) {
+  #panel-reports .report-content {
+    flex-direction: column !important;
+  }
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.table-footer button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.table-footer button:hover:not(:disabled) {
+  background: #1e40af;
+}
+
+.table-footer button:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
   </style>
 </head>
 
@@ -363,6 +483,7 @@ margin-top: 20px;
     <!-- REPORTS PANEL -->
     <section id="panel-reports" class="panel active">
         <h2>Claim Statistics Overview</h2>
+
         <div class="filter-bar">
             <div class="filter-left">
                 <div class="filter-group">
@@ -381,9 +502,82 @@ margin-top: 20px;
             </div>
         </div>
 
-        <div style="background:#fff;padding:1.5rem;border-radius:1rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:800px;margin:auto;">
-            <div id="loading" style="color:#64748b;text-align:center;">Fetching latest data...</div>
-            <canvas id="claimChart" style="width:100%;height:400px;"></canvas>
+        <!-- Graph + Table Layout -->
+        <div class="report-content">
+            <!-- Chart -->
+            <div class="chart-container">
+                <div id="loading" style="color:#64748b;text-align:center;">Fetching latest data...</div>
+                <canvas id="claimChart" style="width:100%;height:400px;"></canvas>
+            </div>
+
+            <!-- Table -->
+            <!-- Table Card -->
+            <div class="table-container">
+                <table id="claimTable">
+                    <thead>
+                    <tr>
+                        <th>Policy Number</th>
+                        <th>Customer Name</th>
+                        <th>Claim Number</th>
+                        <th>Created Date</th>
+                        <th>Success</th>
+                    </tr>
+                    </thead>
+                    <tbody id="claimTableBody">
+                    <!-- Rows dynamically populated or sample data -->
+                    <tr>
+                        <td>POL12345</td>
+                        <td>John Doe</td>
+                        <td>CLM98765</td>
+                        <td>2025-11-05</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>POL67890</td>
+                        <td>Jane Smith</td>
+                        <td>CLM54321</td>
+                        <td>2025-11-06</td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>POL11223</td>
+                        <td>Michael Scott</td>
+                        <td>CLM11111</td>
+                        <td>2025-11-07</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>POL99887</td>
+                        <td>Dwight Schrute</td>
+                        <td>CLM22222</td>
+                        <td>2025-11-08</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td>POL55555</td>
+                        <td>Jim Halpert</td>
+                        <td>CLM33333</td>
+                        <td>2025-11-09</td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>POL66666</td>
+                        <td>Pam Beesly</td>
+                        <td>CLM44444</td>
+                        <td>2025-11-09</td>
+                        <td>✅</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- ✅ Pagination Footer -->
+                <div class="table-footer">
+                    <button id="prevPage" disabled>⬅ Prev</button>
+                    <span id="pageInfo">Showing 1–5 of 6 results</span>
+                    <button id="nextPage">Next ➡</button>
+                </div>
+            </div>
+            <!-- Table End -->
         </div>
     </section>
 
@@ -639,6 +833,92 @@ fileInput.addEventListener("change", () => {
       document.getElementById("mask").style.display = "none";
     }
   });
+  //Table scripts
+  const API_URL = "/api/claims-list"; // Adjust path if needed
+
+// DOM elements
+const tbody = document.getElementById("claimTableBody");
+const prevBtn = document.getElementById("prevPage");
+const nextBtn = document.getElementById("nextPage");
+const pageInfo = document.getElementById("pageInfo");
+
+// Pagination state
+let currentPage = 0;
+const pageSize = 5;
+let totalRecords = 0;
+let totalPages = 0;
+
+// Fetch & render data
+async function fetchClaims(page = 0) {
+  const fromDate = document.getElementById("fromDate")?.value;
+  const toDate = document.getElementById("toDate")?.value;
+
+  const params = new URLSearchParams();
+  if (fromDate) params.append("from", fromDate);
+  if (toDate) params.append("to", toDate);
+  params.append("offset", page * pageSize);
+  params.append("limit", pageSize);
+
+  try {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#64748b;">Loading...</td></tr>`;
+    const res = await fetch(`${API_URL}?${params.toString()}`);
+    if (!res.ok) throw new Error("Failed to fetch claim list");
+    const data = await res.json();
+
+    renderTable(data.claims);
+    updatePagination(data);
+  } catch (err) {
+    console.error("Error loading claims:", err);
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;">Error loading data</td></tr>`;
+  }
+}
+
+function renderTable(claims) {
+  if (!claims || claims.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#64748b;">No claims found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = claims.map(c => `
+    <tr>
+      <td>${c.policyNumber || '-'}</td>
+      <td>${c.customerName || '-'}</td>
+      <td>${c.claimNumber || '-'}</td>
+      <td>${c.createdDate || '-'}</td>
+      <td>${c.success ? '✅' : '❌'}</td>
+    </tr>
+  `).join("");
+}
+
+function updatePagination(data) {
+  totalRecords = data.totalRecords;
+  totalPages = data.totalPages;
+  currentPage = data.currentPage;
+
+  const start = currentPage * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, totalRecords);
+
+  pageInfo.textContent = `Showing ${start}–${end} of ${totalRecords} results`;
+
+  prevBtn.disabled = currentPage <= 0;
+  nextBtn.disabled = currentPage >= totalPages - 1;
+}
+
+// Event listeners
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 0) fetchClaims(currentPage - 1);
+});
+
+nextBtn.addEventListener("click", () => {
+  if (currentPage < totalPages - 1) fetchClaims(currentPage + 1);
+});
+
+// Filter button triggers reload
+document.getElementById("filterBtn").addEventListener("click", () => fetchClaims(0));
+
+// Initial load
+fetchClaims(0);
+  //Table scripts end
 </script>
 </body>
 </html>
