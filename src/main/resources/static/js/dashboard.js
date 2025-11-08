@@ -35,9 +35,9 @@ tabReport.addEventListener("click",    () => activateTab("report"));
 activateTab("analytics");
 
 
-// ============================
-// 🔹 Analytics (Claim Stats)
-// ============================
+
+//Analytics (Claim Stats)
+
 function setDefaultDates() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fromDate').value = today;
@@ -125,9 +125,8 @@ setDefaultDates();
 fetchClaimStats();
 
 
-// ============================
-// 🔹 File Upload + OCR
-// ============================
+
+// File Upload + OCR
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
 const progressBar = document.getElementById("progressBar");
@@ -199,9 +198,9 @@ fileInput.addEventListener("change", () => {
 });
 
 
-// ============================
-// 🔹 Manual Claim Submission
-// ============================
+
+//Manual Claim Submission
+
 document.getElementById('claimForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   document.getElementById("mask").style.display = "flex";
@@ -233,9 +232,7 @@ document.getElementById('claimForm').addEventListener('submit', async (e) => {
 });
 
 
-// ============================
-// 🔹 Claim History Table
-// ============================
+// Claim History Table
 const API_URL = "/api/claims-list";
 const tbody = document.getElementById("claimTableBody");
 const prevBtn = document.getElementById("prevPage");
@@ -284,8 +281,44 @@ function renderTable(claims) {
       <td>${c.claimNumber || '-'}</td>
       <td>${c.createdDate || '-'}</td>
       <td>${c.success ? '✅' : '❌'}</td>
+      <td style="text-align:center;">
+              ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}">🔄</button>` : '-'}
+        </td>
     </tr>
   `).join("");
+
+  document.querySelectorAll(".retry-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const policyNumber = e.target.dataset.policyNumber;
+        await retryClaim(policyNumber);
+      });
+  });
+}
+
+async function retryClaim(policyNumber) {
+  if (!confirm(`Reprocess claim by ${policyNumber}?`)) return;
+
+  document.getElementById("mask").style.display = "flex"; // show loader
+
+  try {
+    const res = await fetch(`/api/retry-claim/${policyNumber}`, {
+      method: "POST"
+    });
+
+    if (!res.ok) throw new Error("Server error during retry");
+
+    const updatedClaim = await res.json();
+
+    alert(`✅ Claim reprocessed successfully.\nNew Claim Number: ${updatedClaim.claimNumber}`);
+
+    // Refresh the table to reflect updated status
+    fetchClaims(currentPage);
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Failed to reprocess claim. Check server logs.");
+  } finally {
+    document.getElementById("mask").style.display = "none"; // hide loader
+  }
 }
 
 function updatePagination(data) {

@@ -11,6 +11,7 @@ import com.sapiens.innovate.entity.InnovaiteClaim;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, Long> {
@@ -19,7 +20,9 @@ public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, 
 
     List<InnovaiteClaim> findBySuccess(boolean success);
 
-    InnovaiteClaim findByClaimNumber(String claimNumber);
+    Optional<InnovaiteClaim> findByClaimNumber(String claimNumber);
+
+    Optional<InnovaiteClaim> findByPolicyNumber(String policyNumber);
 
     @Query("SELECT COUNT(c) FROM InnovaiteClaim c " +
             "WHERE c.createdDate BETWEEN :from AND :to")

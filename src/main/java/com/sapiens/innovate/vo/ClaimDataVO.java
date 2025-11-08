@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -37,7 +38,7 @@ public class ClaimDataVO {
     @NotNull(message = "Incident date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("incidentDate")
-    private LocalDate incidentDate;
+    private LocalDateTime incidentDate;
 
     @JsonProperty("claimAmount")
     private BigDecimal claimAmount;

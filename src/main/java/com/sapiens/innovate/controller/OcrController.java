@@ -3,7 +3,9 @@ package com.sapiens.innovate.controller;
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.service.ClaimService;
 import com.sapiens.innovate.service.GPTProcessorService;
+import com.sapiens.innovate.service.InnovaiteClaimService;
 import com.sapiens.innovate.service.OcrService;
+import com.sapiens.innovate.vo.ClaimDTO;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
 import jakarta.validation.Valid;
@@ -29,6 +31,9 @@ public class OcrController {
 
     @Autowired
     protected ClaimService claimService;
+
+    @Autowired
+    protected InnovaiteClaimService innovaiteClaimService;
 
     @PostMapping(value = "/ocr",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAndExtract(@RequestParam("file") MultipartFile file) {
@@ -63,19 +68,29 @@ public class OcrController {
         log.info("Received new manual claim: {}", claimData);
 
         try {
-            InnovaiteClaim innovaiteClaim = claimService.saveDetailsToDB(claimData,claimData.toString());
+            InnovaiteClaim innovaiteClaim = innovaiteClaimService.saveDetailsToDB(claimData,claimData.toString());
             ClaimResponseVO claimResponseVO = claimService.raiseClaim(claimData);
             if(claimResponseVO.getClaimNumber()!=null){
-                returnVal.append("Claim created successfully for policy: " + claimData.getPolicyNumber() +" ,Claim number : "+claimData.getPolicyNumber());
+                returnVal.append("Claim created successfully for policy: " + claimData.getPolicyNumber() +" ,Claim number : "+claimResponseVO.getClaimNumber());
+                claimService.updateClaimInDB(innovaiteClaim,claimResponseVO);
             }else{
                 returnVal.append("Failed to create claim, try again after sometime!!!");
             }
-            claimService.updateClaimInDB(innovaiteClaim,claimResponseVO);
             return ResponseEntity.ok(returnVal.toString());
         } catch (Exception ex) {
             log.error("Error creating claim: ", ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to create claim: " + ex.getMessage());
+        }
+    }
+
+    @PostMapping("/retry-claim/{policyNumber}")
+    public ResponseEntity<ClaimDTO> retryClaim(@PathVariable String policyNumber) {
+        try {
+            ClaimDTO updated = claimService.retryClaimProcessing(policyNumber);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

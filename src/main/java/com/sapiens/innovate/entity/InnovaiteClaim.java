@@ -1,10 +1,17 @@
 package com.sapiens.innovate.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "INNOVAITE_CLAIMS")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class InnovaiteClaim {
 
     @Id
@@ -30,10 +37,13 @@ public class InnovaiteClaim {
     private String phone;
 
     @Column(name = "CLAIM_AMOUNT")
-    private Double claimAmount;
+    private BigDecimal claimAmount;
 
     @Column(name = "STATUS", nullable = false)
     private String status;
+
+    @Column(name = "EVENT_DATE", nullable = false)
+    private LocalDateTime eventDate;
 
     @Column(name = "CREATED_DATE", nullable = false)
     private LocalDateTime createdDate;
@@ -50,8 +60,19 @@ public class InnovaiteClaim {
     @Column(name = "RESPONSE", length = 4000)
     private String response;
 
+    public LocalDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
+
     @Column(name = "SUCCESS", nullable = false)
     private Boolean success;
+
+    @Column(name = "EVENT_DESC")
+    private String eventDesc;
 
     // Getters and Setters
     public String getEmailContent() {
@@ -79,8 +100,8 @@ public class InnovaiteClaim {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public Double getClaimAmount() { return claimAmount; }
-    public void setClaimAmount(Double claimAmount) { this.claimAmount = claimAmount; }
+    public BigDecimal getClaimAmount() { return claimAmount; }
+    public void setClaimAmount(BigDecimal claimAmount) { this.claimAmount = claimAmount; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
@@ -102,4 +123,10 @@ public class InnovaiteClaim {
 
     public Boolean getSuccess() { return success; }
     public void setSuccess(Boolean success) { this.success = success; }
+
+    public String getEventDesc() {return eventDesc;}
+
+    public void setEventDesc(String eventDesc) {
+        this.eventDesc = eventDesc;
+    }
 }

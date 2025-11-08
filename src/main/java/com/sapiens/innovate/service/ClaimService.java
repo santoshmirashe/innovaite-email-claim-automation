@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,7 +34,7 @@ public class ClaimService {
     protected GPTProcessorService gptProcessor;
 
     @Autowired
-    protected InnovaiteClaimRepository repository;
+    protected InnovaiteClaimRepository claimRepository;
 
     @Autowired
     protected EmailService emailService;
@@ -98,9 +99,10 @@ public class ClaimService {
             claimData = gptProcessor.analyzeMessage(combinedText);
 
             claim.setPolicyNumber(claimData.getPolicyNumber());
-            claim.setClaimAmount(null != claimData.getClaimAmount() ? claimData.getClaimAmount().doubleValue():0);
+            claim.setClaimAmount(null != claimData.getClaimAmount() ? claimData.getClaimAmount(): BigDecimal.ZERO);
             claim.setPhone(claimData.getContactPhone());
             claim.setCustomerName(claimData.getContactName());
+            claim.setEventDate(claimData.getIncidentDate());
 
             // Validate extracted data
             validateClaimData(claimData, email);
@@ -116,7 +118,7 @@ public class ClaimService {
 
             // Step 3: Notify customer
             String subject = "Claim Received - Reference: " + claimResponse.getClaimNumber();
-            String body = buildAcknowledgmentEmail(claimData, claimResponse);
+            String body = Utils.buildAcknowledgmentEmail(claimData, claimResponse);
             emailService.sendEmail(email.getSenderEmailAddress(), subject, body);
             claim.setSuccess(true);
             claim.setStatus("Under Review");
@@ -127,7 +129,7 @@ public class ClaimService {
         }catch(Exception exception) {
             log.error(exception.getMessage());
         }finally {
-            repository.save(claim);
+            claimRepository.save(claim);
         }
     }
 
@@ -157,64 +159,12 @@ public class ClaimService {
         }
     }
 
-    private String buildAcknowledgmentEmail(ClaimDataVO claimData, ClaimResponseVO claimResponse) {
-        return String.format("""
-                        Dear %s,
-
-                        Your claim has been successfully received and is being processed.
-
-                        Claim Details:
-                        - Claim Number: %s
-                        - Policy Number: %s
-                        - Incident Date: %s
-                        - Status: Under Review
-
-                        We will keep you updated on the progress of your claim.
-                        If you have any questions, please reference your claim number when contacting us.
-
-                        Thank you for reaching out to us.
-
-                        Best regards,
-                        P&C Claims Team
-                        """,
-                claimData.getContactName() != null ? claimData.getContactName() : "Valued Customer",
-                claimResponse.getClaimNumber(),
-                claimData.getPolicyNumber(),
-                claimData.getIncidentDate()
-        );
-    }
-
-    private String buildErrorEmail(EmailVO email, ClaimDataVO claimData, String errorMessage) {
-        return String.format("""
-                        Dear Customer,
-
-                        We received your claim submission but need additional information to process it.
-
-                        Issue: %s
-
-                        Please reply to this email with the following information:
-                        - Policy Number (if not provided)
-                        - Your Full Name
-                        - Contact Phone Number
-                        - Detailed Description of the Incident
-                        - Date of Incident (YYYY-MM-DD format)
-                        - Estimated Claim Amount
-
-                        We apologize for any inconvenience and look forward to processing your claim.
-
-                        Best regards,
-                        P&C Claims Team
-                        """,
-                errorMessage
-        );
-    }
-
     public Map<String, Long> getStatistics(LocalDate from, LocalDate to){
         LocalDateTime fromDateTime = (from != null) ? from.atStartOfDay() : LocalDate.now().atStartOfDay();
         LocalDateTime toDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
-        long totalEmailsProcessed = repository.getTotalClaims(fromDateTime,toDateTime);
-        long successfullyProcessedEmails = repository.getTotalSuccessClaims(fromDateTime,toDateTime);
-        long failedToProcessEmails = repository.getTotalFailedClaims(fromDateTime,toDateTime);
+        long totalEmailsProcessed = claimRepository.getTotalClaims(fromDateTime,toDateTime);
+        long successfullyProcessedEmails = claimRepository.getTotalSuccessClaims(fromDateTime,toDateTime);
+        long failedToProcessEmails = claimRepository.getTotalFailedClaims(fromDateTime,toDateTime);
         return Map.of(
                 "created", totalEmailsProcessed,
                 "success", successfullyProcessedEmails,
@@ -227,7 +177,7 @@ public class ClaimService {
         LocalDateTime toDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
 
         Pageable pageable = PageRequest.of(offset / limit, limit);
-        Page<InnovaiteClaim> page = repository.findClaims(fromDateTime, toDateTime, pageable);
+        Page<InnovaiteClaim> page = claimRepository.findClaims(fromDateTime, toDateTime, pageable);
 
         List<ClaimDTO> claimDTOs = page.getContent().stream()
                 .map(c -> new ClaimDTO(
@@ -280,22 +230,6 @@ public class ClaimService {
         return combined.toString();
     }
 
-    public InnovaiteClaim saveDetailsToDB(ClaimDataVO claimDataVO,String content){
-        InnovaiteClaim innovaiteClaim = new InnovaiteClaim();
-        innovaiteClaim.setEmailContent(content);
-        innovaiteClaim.setSuccess(false);
-        innovaiteClaim.setStatus("PENDING");
-        innovaiteClaim.setProcessed("PENDING");
-        innovaiteClaim.setCreatedDate(LocalDateTime.now());
-        innovaiteClaim.setUpdateDate(LocalDateTime.now());
-        innovaiteClaim.setPolicyNumber(claimDataVO.getPolicyNumber());
-        innovaiteClaim.setClaimAmount(null != claimDataVO.getClaimAmount() ? claimDataVO.getClaimAmount().doubleValue():0);
-        innovaiteClaim.setPhone(claimDataVO.getContactPhone());
-        innovaiteClaim.setCustomerName(claimDataVO.getContactName());
-        innovaiteClaim.setRequest(claimDataVO.toString());
-        repository.save(innovaiteClaim);
-        return innovaiteClaim;
-    }
 
     public InnovaiteClaim updateClaimInDB(InnovaiteClaim innovaiteClaim ,ClaimResponseVO claimResponse){
         innovaiteClaim.setSuccess(true);
@@ -303,8 +237,41 @@ public class ClaimService {
         innovaiteClaim.setClaimNumber(claimResponse.getClaimNumber());
         innovaiteClaim.setResponse(claimResponse.toString());
         innovaiteClaim.setProcessed("PROCESSED");
-        repository.save(innovaiteClaim);
+        innovaiteClaim.setUpdateDate(LocalDateTime.now());
+        claimRepository.save(innovaiteClaim);
         return innovaiteClaim;
+    }
+
+    public ClaimDTO retryClaimProcessing(String policyNumber) {
+        StringBuilder returnVal = new StringBuilder();
+        InnovaiteClaim claim = claimRepository.findByPolicyNumber(policyNumber)
+                .orElseThrow(() -> new RuntimeException("Claim record not found in DB"));
+        ClaimDataVO claimData = ClaimDataVO.builder()
+                .contactName(claim.getCustomerName())
+                .contactPhone(claim.getPhone())
+                .policyNumber(claim.getPolicyNumber())
+                .claimAmount(claim.getClaimAmount())
+                .claimDescription(claim.getEventDesc())
+                .incidentDate(claim.getEventDate())
+                .build();
+
+        ClaimResponseVO claimResponseVO = raiseClaim(claimData);
+                // Simulate reprocessing logic (re-run OCR, GPT, etc.)
+                // For demo, just update status + generate a new claim number
+        if(claimResponseVO.getClaimNumber()!=null){
+            returnVal.append("Claim created successfully for policy: " + claimData.getPolicyNumber() +" ,Claim number : "+claimResponseVO.getClaimNumber());
+            updateClaimInDB(claim,claimResponseVO);
+        }else{
+            returnVal.append("Failed to create claim, try again after sometime!!!");
+        }
+
+        return new ClaimDTO(
+                claim.getPolicyNumber(),
+                claim.getCustomerName(),
+                claim.getClaimNumber(),
+                claim.getCreatedDate(),
+                claim.getSuccess()
+        );
     }
 
 }

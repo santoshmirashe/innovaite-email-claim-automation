@@ -1,7 +1,11 @@
 package com.sapiens.innovate.service;
 
+import com.sapiens.innovate.vo.ClaimDataVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.repository.InnovaiteClaimRepository;
@@ -10,34 +14,52 @@ import com.sapiens.innovate.repository.InnovaiteClaimRepository;
 @Transactional
 public class InnovaiteClaimService {
 
-    private final InnovaiteClaimRepository repository;
+    private final InnovaiteClaimRepository claimRepository;
 
     public InnovaiteClaimService(InnovaiteClaimRepository repository) {
-        this.repository = repository;
+        this.claimRepository = repository;
     }
 
     public List<InnovaiteClaim> getAllClaims() {
-        return repository.findAll();
+        return claimRepository.findAll();
     }
 
     public InnovaiteClaim getClaimByNumber(String claimNumber) {
-        return repository.findByClaimNumber(claimNumber);
+        return claimRepository.findByClaimNumber(claimNumber).orElseThrow(()->new IllegalArgumentException("No such claim found by claim Nr" + claimNumber));
     }
 
     public List<InnovaiteClaim> getSuccessfulClaims() {
-        return repository.findBySuccess(true);
+        return claimRepository.findBySuccess(true);
     }
 
     public List<InnovaiteClaim> getFailedClaims() {
-        return repository.findBySuccess(false);
+        return claimRepository.findBySuccess(false);
     }
 
     public InnovaiteClaim saveClaim(InnovaiteClaim claim) {
         claim.setUpdateDate(java.time.LocalDateTime.now());
-        return repository.save(claim);
+        return claimRepository.save(claim);
     }
 
     public void deleteClaim(Long id) {
-        repository.deleteById(id);
+        claimRepository.deleteById(id);
+    }
+
+    public InnovaiteClaim saveDetailsToDB(ClaimDataVO claimDataVO, String content){
+        InnovaiteClaim innovaiteClaim = new InnovaiteClaim();
+        innovaiteClaim.setEmailContent(content);
+        innovaiteClaim.setSuccess(false);
+        innovaiteClaim.setStatus("PENDING");
+        innovaiteClaim.setProcessed("PENDING");
+        innovaiteClaim.setEventDate(claimDataVO.getIncidentDate());
+        innovaiteClaim.setCreatedDate(LocalDateTime.now());
+        innovaiteClaim.setUpdateDate(LocalDateTime.now());
+        innovaiteClaim.setPolicyNumber(claimDataVO.getPolicyNumber());
+        innovaiteClaim.setClaimAmount(null != claimDataVO.getClaimAmount() ? claimDataVO.getClaimAmount(): BigDecimal.ZERO);
+        innovaiteClaim.setPhone(claimDataVO.getContactPhone());
+        innovaiteClaim.setCustomerName(claimDataVO.getContactName());
+        innovaiteClaim.setRequest(claimDataVO.toString());
+        claimRepository.save(innovaiteClaim);
+        return innovaiteClaim;
     }
 }
