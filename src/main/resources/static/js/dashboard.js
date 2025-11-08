@@ -42,6 +42,8 @@ function setDefaultDates() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fromDate').value = today;
   document.getElementById('toDate').value = today;
+  document.getElementById('fromDateHistory').value = today;
+    document.getElementById('toDateHistory').value = today;
 }
 
 async function fetchClaimStats() {
@@ -248,8 +250,8 @@ let totalRecords = 0;
 let totalPages = 0;
 
 async function fetchClaims(page = 0) {
-  const fromDate = document.getElementById("fromDate")?.value;
-  const toDate = document.getElementById("toDate")?.value;
+  const fromDate = document.getElementById("fromDateHistory")?.value;
+  const toDate = document.getElementById("toDateHistory")?.value;
 
   const params = new URLSearchParams();
   if (fromDate) params.append("from", fromDate);
@@ -309,8 +311,8 @@ nextBtn.addEventListener("click", () => {
   if (currentPage < totalPages - 1) fetchClaims(currentPage + 1);
 });
 
-document.getElementById("filterBtn").addEventListener("click", () => fetchClaims(0));
+document.getElementById("filterBtnHistory").addEventListener("click", () => fetchClaims(0));
+document.getElementById("refreshBtnHistory").addEventListener("click", () => fetchClaims(currentPage));
+document.getElementById("refreshBtn").addEventListener("click", () => fetchClaimStats());
 
-// Initial load for history
-fetchClaims(0);
 });
