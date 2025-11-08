@@ -1,0 +1,35 @@
+<!-- fragments/claim-form.html -->
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="claim-form">
+    <div class="claim-card">
+        <h2>📄 Create Claim</h2>
+        <h4 style="text-align:center;font-weight:400;color:#555;">Upload a file or fill manually</h4>
+
+        <!-- Upload widget -->
+        <div th:replace="fragments/upload-section :: upload-section"></div>
+
+        <hr style="margin:2rem 0;border:0;border-top:1px solid #ddd;">
+
+        <!-- Manual Claim Form -->
+        <form id="claimForm">
+            <div class="form-row">
+                <div class="form-group"><label>Policy Number *</label><input id="policyNumber" required></div>
+                <div class="form-group"><label>Contact Name *</label><input id="contactName" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Email *</label><input type="email" id="fromEmail" required></div>
+                <div class="form-group"><label>Phone</label><input id="contactPhone"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Incident Date *</label><input type="date" id="incidentDate" required></div>
+                <div class="form-group"><label>Claim Amount</label><input type="number" step="0.01" id="claimAmount"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Description *</label><textarea id="claimDescription" rows="3" required></textarea></div>
+                <div class="form-group"><label>Summary</label><textarea id="summary" rows="3"></textarea></div>
+            </div>
+            <button class="submit-btn" type="submit">🚀 Submit Claim</button>
+        </form>
+
+        <div id="manualResult" style="margin-top:1rem;"></div>
+    </div>
+</section>

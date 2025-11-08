@@ -449,3 +449,11 @@ cursor: not-allowed;
 .chart-container,.table-container{
 min-height: 428px !important;
 }
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}

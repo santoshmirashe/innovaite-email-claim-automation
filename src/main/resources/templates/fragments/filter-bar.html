@@ -1,0 +1,20 @@
+<!-- fragments/filter-bar.html -->
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="filter-bar">
+  <div class="filter-bar">
+    <div class="filter-left">
+      <div class="filter-group">
+        <label for="fromDate">From:</label>
+        <input type="date" id="fromDate" />
+      </div>
+      <div class="filter-group">
+        <label for="toDate">To:</label>
+        <input type="date" id="toDate" />
+      </div>
+    </div>
+
+    <div class="filter-right">
+      <button id="filterBtn">🔍 Filter</button>
+      <button id="refreshBtn" onclick="fetchClaimStats()">🔄 Refresh</button>
+    </div>
+  </div>
+</div>

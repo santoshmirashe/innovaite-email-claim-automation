@@ -54,7 +54,7 @@ public class ClaimStatsController {
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
 
-        PaginatedClaimResponse response = claimService.getClaimsPaginated(from, to, offset, limit);
+        PaginatedClaimResponse response = claimService.getClaimsPaginated(LocalDate.from(from.atStartOfDay()), LocalDate.from(to.atTime(23,59,59)), offset, limit);
         return ResponseEntity.ok(response);
     }
 

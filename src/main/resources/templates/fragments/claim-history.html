@@ -1,0 +1,25 @@
+<!-- fragments/claim-history.html -->
+<div  xmlns:th="http://www.thymeleaf.org" th:fragment="claim-history" >
+    <div class="table-container">
+        <table id="claimTable">
+            <thead>
+            <tr>
+                <th>Policy Number</th>
+                <th>Customer Name</th>
+                <th>Claim Number</th>
+                <th>Created Date</th>
+                <th>Success</th>
+            </tr>
+            </thead>
+            <tbody id="claimTableBody">
+            <!-- Rows dynamically populated by dashboard.js -->
+            </tbody>
+        </table>
+
+        <div class="table-footer">
+            <button id="prevPage" disabled>⬅ Prev</button>
+            <span id="pageInfo">Showing 1–5 of 0 results</span>
+            <button id="nextPage">Next ➡</button>
+        </div>
+    </div>
+</div>
