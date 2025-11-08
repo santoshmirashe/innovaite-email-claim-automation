@@ -6,20 +6,22 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Email-Claim Automation — Home</title>
+    <link rel="stylesheet" th:href="@{'/css/dashboard.css'}"/>
+    <script defer th:src="@{'/js/dashboard.js'}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <style>
+    <!--<style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1e40af;
-      --gray: #f3f4f6;
-      --text: #111827;
+      &#45;&#45;primary: #2563eb;
+      &#45;&#45;primary-dark: #1e40af;
+      &#45;&#45;gray: #f3f4f6;
+      &#45;&#45;text: #111827;
     }
 
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
-      background: var(--gray);
-      color: var(--text);
+      background: var(&#45;&#45;gray);
+      color: var(&#45;&#45;text);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
@@ -60,12 +62,12 @@
       border-radius: 0.5rem;
       cursor: pointer;
       font-weight: 500;
-      color: var(--text);
+      color: var(&#45;&#45;text);
       transition: 0.2s;
     }
 
     .nav-item.active {
-      background: var(--primary);
+      background: var(&#45;&#45;primary);
       color: #fff;
     }
 
@@ -107,7 +109,7 @@
     input[type="file"] { display: none; }
 
     .file-label {
-      background: var(--primary);
+      background: var(&#45;&#45;primary);
       color: #fff;
       padding: 10px 20px;
       border-radius: 6px;
@@ -116,7 +118,7 @@
       display: inline-block;
     }
 
-    .file-label:hover { background: var(--primary-dark); }
+    .file-label:hover { background: var(&#45;&#45;primary-dark); }
 
     .form-row {
       display: grid;
@@ -136,7 +138,7 @@
     }
 
     button {
-      background: var(--primary-dark);
+      background: var(&#45;&#45;primary-dark);
       border: none;
       color: #fff;
       padding: 0.8rem 1.5rem;
@@ -147,7 +149,7 @@
       margin: 0 auto 0;
     }
 
-    button:hover { background: var(--primary); }
+    button:hover { background: var(&#45;&#45;primary); }
 
     footer {
       background: #1e293b;
@@ -460,7 +462,7 @@ margin-top: 20px;
 min-height: 428px !important;
 }
 
-  </style>
+  </style>-->
 </head>
 
 <body>
@@ -630,7 +632,7 @@ min-height: 428px !important;
 
 <footer>© 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon</footer>
 
-<script>
+<!--<script>
   const navReports = document.getElementById('nav-reports');
   const navClaim = document.getElementById('nav-claim');
   const panelReports = document.getElementById('panel-reports');
@@ -647,7 +649,7 @@ min-height: 428px !important;
     })
   );
 
-  // --- DB Chart ---
+  // -&#45;&#45; DB Chart -&#45;&#45;
   function setDefaultDates() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('fromDate').value = today;
@@ -808,7 +810,7 @@ fileInput.addEventListener("change", () => {
 });
 
 
-  // --- Submit Claim ---
+  // -&#45;&#45; Submit Claim -&#45;&#45;
   document.getElementById('claimForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     document.getElementById("mask").style.display = "flex";
@@ -922,6 +924,6 @@ document.getElementById("filterBtn").addEventListener("click", () => fetchClaims
 // Initial load
 fetchClaims(0);
   //Table scripts end
-</script>
+</script>-->
 </body>
 </html>
