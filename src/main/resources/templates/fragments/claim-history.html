@@ -1,5 +1,7 @@
 <!-- fragments/claim-history.html -->
 <div  xmlns:th="http://www.thymeleaf.org" th:fragment="claim-history" >
+    <!-- ✅ Include Filter Bar -->
+    <div th:replace="fragments/filter-bar-history :: filter-bar"></div>
     <div class="table-container">
         <table id="claimTable">
             <thead>
