@@ -1,124 +1,39 @@
+<!-- homepage.html -->
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="fragments/head :: common-head('Email-Claim Automation — Home')"></head>
+<head th:replace="fragments/head :: common-head('Email-Claim Automation')"></head>
 
 <body>
-<!-- Header -->
 <div th:replace="fragments/header :: main-header"></div>
+<div th:replace="fragments/nav :: main-nav"></div>
 
-<!-- Navigation -->
-<div th:replace="fragments/nav :: main-nav('reports')"></div>
-
-<!-- Main Content -->
 <main>
-    <!-- REPORTS PANEL -->
-    <section id="panel-reports" class="panel active">
-        <h2>Claim Statistics Overview</h2>
 
-        <!-- 🔍 Filter bar -->
-        <div class="filter-bar">
-            <div class="filter-left">
-                <div class="filter-group">
-                    <label for="fromDate">From:</label>
-                    <input type="date" id="fromDate" />
-                </div>
-                <div class="filter-group">
-                    <label for="toDate">To:</label>
-                    <input type="date" id="toDate" />
-                </div>
-            </div>
+        <!-- 📊 Analytics Panel -->
+        <section id="panel-analytics" class="panel active">
+            <!-- ✅ Reuse your existing REPORTS PANEL HTML -->
+            <h2>Claim Statistics Overview</h2>
+            <div th:replace="fragments/report-section :: report-section"></div>
+        </section>
 
-            <div class="filter-right">
-                <button id="filterBtn">🔍 Filter</button>
-                <button id="refreshBtn" onclick="fetchClaimStats()">🔄 Refresh</button>
-            </div>
-        </div>
+        <!-- 📜 History Panel -->
+        <section id="panel-history" class="panel">
+            <h2>Claim History</h2>
+            <div th:replace="fragments/claim-history :: claim-history"></div>
+        </section>
 
-        <!-- 📊 Chart + Table -->
-        <div class="report-content">
-            <div class="chart-container">
-                <div id="loading" style="color:#64748b;text-align:center;">Fetching latest data...</div>
-                <canvas id="claimChart" style="width:100%;height:400px;"></canvas>
-            </div>
+        <!-- ➕ Report Loss Panel -->
+        <section id="panel-report" class="panel">
+            <div th:replace="fragments/claim-form :: claim-form"></div>
+        </section>
 
-            <div class="table-container">
-                <table id="claimTable">
-                    <thead>
-                    <tr>
-                        <th>Policy Number</th>
-                        <th>Customer Name</th>
-                        <th>Claim Number</th>
-                        <th>Created Date</th>
-                        <th>Success</th>
-                    </tr>
-                    </thead>
-                    <tbody id="claimTableBody">
-                    <!-- Rows dynamically populated -->
-                    </tbody>
-                </table>
+        <div id="mask"><div></div></div>
 
-                <div class="table-footer">
-                    <button id="prevPage" disabled>⬅ Prev</button>
-                    <span id="pageInfo">Showing 1–5 of 6 results</span>
-                    <button id="nextPage">Next ➡</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 📝 CLAIM CREATION PANEL -->
-    <section id="panel-claim" class="panel">
-        <div class="claim-card">
-            <h2>📄 Create Claim</h2>
-            <h4 style="text-align:center;font-weight:400;color:#555;">Upload a file or fill manually</h4>
-
-            <!-- Upload -->
-            <div class="upload-section">
-                <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx"/>
-                <label for="fileInput" class="file-label">📎 Choose File</label>
-                <div id="fileName" style="margin-top:10px;font-size:0.9rem;"></div>
-
-                <div id="progressBar"
-                     style="margin-top:1rem;width:60%;height:8px;border-radius:4px;background:#d1d5db;overflow:hidden;display:none;margin-inline:auto;">
-                    <div style="height:100%;width:0;background:var(--primary);transition:width 0.3s;"></div>
-                </div>
-
-                <div id="result"
-                     style="margin-top:1.5rem;background:#f9fafb;padding:1rem;border-radius:0.5rem;display:none;"></div>
-            </div>
-
-            <hr style="margin:2rem 0;border:0;border-top:1px solid #ddd;">
-
-            <!-- Manual Claim Form -->
-            <form id="claimForm">
-                <div class="form-row">
-                    <div class="form-group"><label>Policy Number *</label><input id="policyNumber" required></div>
-                    <div class="form-group"><label>Contact Name *</label><input id="contactName" required></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Email *</label><input type="email" id="fromEmail" required></div>
-                    <div class="form-group"><label>Phone</label><input id="contactPhone"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Incident Date *</label><input type="date" id="incidentDate" required></div>
-                    <div class="form-group"><label>Claim Amount</label><input type="number" step="0.01" id="claimAmount"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Description *</label><textarea id="claimDescription" rows="3" required></textarea></div>
-                    <div class="form-group"><label>Summary</label><textarea id="summary" rows="3"></textarea></div>
-                </div>
-                <button class="submit-btn" type="submit">🚀 Submit Claim</button>
-            </form>
-            <div id="manualResult" style="margin-top:1rem;"></div>
-        </div>
-    </section>
-
-    <div id="mask"><div></div></div>
 </main>
 
-<!-- Footer -->
 <div th:replace="fragments/footer :: main-footer"></div>
 </body>
 </html>

@@ -1,0 +1,15 @@
+<!-- fragments/report-section.html -->
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="report-section">
+
+  <!-- ✅ Include Filter Bar -->
+  <div th:replace="fragments/filter-bar :: filter-bar"></div>
+
+  <div class="report-content">
+    <!-- Chart -->
+    <div class="chart-container">
+      <div id="loading" style="color:#64748b;text-align:center;">Fetching latest data...</div>
+      <canvas id="claimChart" style="width:100%;height:400px;"></canvas>
+    </div>
+
+  </div>
+</section>

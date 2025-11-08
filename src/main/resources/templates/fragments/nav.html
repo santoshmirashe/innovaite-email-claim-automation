@@ -1,6 +1,37 @@
-<nav xmlns:th="http://www.thymeleaf.org" th:fragment="main-nav(activePage)">
-    <div id="nav-reports" class="nav-item"
-         th:classappend="${activePage == 'reports'} ? ' active' : ''">Reports</div>
-    <div id="nav-claim" class="nav-item"
-         th:classappend="${activePage == 'claim'} ? ' active' : ''">Create Claim</div>
+<!-- fragments/nav.html -->
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="main-nav">
+    <div id="tab-analytics" class="nav-item active">📊 Analytics</div>
+    <div id="tab-history" class="nav-item">📜 History</div>
+    <div id="tab-report" class="nav-item">➕ Report Loss</div>
 </nav>
+
+<style>
+  nav {
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .nav-item {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: #1e293b;
+    transition: 0.2s ease;
+    user-select: none;
+  }
+
+  .nav-item.active {
+    background: #2563eb;
+    color: #fff;
+  }
+
+  .nav-item:hover {
+    background: #1e40af;
+    color: #fff;
+  }
+</style>

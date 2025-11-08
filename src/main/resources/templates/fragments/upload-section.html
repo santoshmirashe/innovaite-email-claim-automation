@@ -1,0 +1,16 @@
+<!-- fragments/upload-section.html -->
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="upload-section">
+    <div class="upload-section">
+        <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.docx"/>
+        <label for="fileInput" class="file-label">📎 Choose File</label>
+        <div id="fileName" style="margin-top:10px;font-size:0.9rem;"></div>
+
+        <div id="progressBar"
+             style="margin-top:1rem;width:60%;height:8px;border-radius:4px;background:#d1d5db;overflow:hidden;display:none;margin-inline:auto;">
+            <div style="height:100%;width:0;background:var(--primary);transition:width 0.3s;"></div>
+        </div>
+
+        <div id="result"
+             style="margin-top:1.5rem;background:#f9fafb;padding:1rem;border-radius:0.5rem;display:none;"></div>
+    </div>
+</div>
