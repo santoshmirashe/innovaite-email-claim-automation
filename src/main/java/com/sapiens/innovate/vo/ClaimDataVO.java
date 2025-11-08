@@ -48,4 +48,18 @@ public class ClaimDataVO {
     @JsonProperty("sourceEmailMessageId")
     private String sourceEmailMessageId;
 
+    @Override
+    public String toString() {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+            mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            mapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
+
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (Exception e) {
+            return "{ \"error\": \"Failed to convert ClaimDataVO to JSON\", " +
+                    "\"message\": \"" + e.getMessage() + "\" }";
+        }
+    }
 }
