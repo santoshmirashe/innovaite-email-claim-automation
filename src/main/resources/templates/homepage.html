@@ -293,18 +293,24 @@
 </head>
 <body>
 
-<header>
-    <div class="header-left">
-        <h1>Email-Claim Automation <span style="color:#93c5fd;">Workbench</span></h1>
+<header style="display:flex; align-items:center; justify-content:space-between; background:#0a1a2f; color:#fff; padding:10px 20px;">
+    <div class="header-left" style="display:flex; align-items:center; gap:12px;">
+        <!-- LOGO -->
+        <img src="images/logo-white.png" alt="Logo" style="height:80px; width:auto;">
+        <h1 style="margin:0; font-size:1.6rem; font-weight:600;">
+            Email-Claim Automation <span style="color:#93c5fd;">Workbench</span>
+        </h1>
     </div>
-    <div class="header-right">
-        <div class="profile">👤 <span sec:authentication="name">User</span></div>
+    <div class="header-right" style="display:flex; align-items:center; gap:15px;">
+        <div class="profile" style="font-weight:500;">👤 <span sec:authentication="name">User</span></div>
         <form th:action="@{/logout}" method="post" style="margin:0;">
-            <button type="submit" class="logout-btn">🚪 Logout</button>
+            <button type="submit" class="logout-btn"
+                    style="background:#2563eb; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:500;">
+                🚪 Logout
+            </button>
         </form>
     </div>
 </header>
-
 <nav>
     <div id="nav-reports" class="nav-item active">Reports</div>
     <div id="nav-upload" class="nav-item">Claim Upload</div>

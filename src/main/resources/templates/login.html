@@ -192,11 +192,18 @@
 </head>
 <body>
 <!-- Header -->
-<header>
-    <h1>Email-Claim Automation</h1>
-    <small>Environment: Development</small>
+<header style="display:flex; align-items:center; justify-content:space-between; background:#0a1a2f; color:#fff; padding:10px 20px;">
+    <div class="header-left" style="display:flex; align-items:center; gap:12px;">
+        <!-- LOGO -->
+        <img src="images/logo-white.png" alt="Logo" style="height:80px; width:auto;">
+        <h1 style="margin:0; font-size:1.6rem; font-weight:600;">
+            Email-Claim Automation <span style="color:#93c5fd;">Workbench</span>
+        </h1>
+    </div>
+    <div class="header-right" style="display:flex; align-items:center; gap:15px;">
+        <small style="font-size: 1rem; opacity: 0.9;">Environment: Development</small>
+    </div>
 </header>
-
 <!-- Main -->
 <main>
     <!-- Floating bubbles -->
@@ -207,7 +214,7 @@
     <div class="bubble"></div>
 
     <div class="login-card">
-        <h2>Login to Continue</h2>
+        <h2>Login</h2>
 
         <form th:action="@{/login}" method="post">
             <input type="text" name="username" value="admin" placeholder="👤 Username" required />

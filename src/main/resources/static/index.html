@@ -4,54 +4,114 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Email-Claim Automation — Login</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
     :root {
-      --primary: #2563eb;
+      --primary: #3b82f6;
       --primary-dark: #1e40af;
-      --gray: #f3f4f6;
-      --text: #111827;
+      --accent: #60a5fa;
+      --text-light: #f8fafc;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background-color: var(--gray);
-      color: var(--text);
+      font-family: "Poppins", sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      justify-content: space-between;
+      color: var(--text-light);
+      background: linear-gradient(-45deg, #1e3a8a, #2563eb, #9333ea, #06b6d4);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      overflow-x: hidden;
     }
 
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* HEADER */
     header {
-      background: #1e293b;
+      background: rgba(0, 0, 0, 0.2);
       color: #fff;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     }
 
+    header h1 {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    header small {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    /* MAIN */
     main {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 2rem;
+      position: relative;
     }
 
+    /* Bubbles background */
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.4; }
+      50% { opacity: 0.9; }
+      100% { transform: translateY(-800px) scale(1.2); opacity: 0; }
+    }
+
+    .bubble:nth-child(1) { left: 15%; width: 25px; height: 25px; animation-delay: 0s; }
+    .bubble:nth-child(2) { left: 30%; width: 35px; height: 35px; animation-delay: 2s; }
+    .bubble:nth-child(3) { left: 55%; width: 20px; height: 20px; animation-delay: 4s; }
+    .bubble:nth-child(4) { left: 70%; width: 45px; height: 45px; animation-delay: 6s; }
+    .bubble:nth-child(5) { left: 85%; width: 30px; height: 30px; animation-delay: 8s; }
+
+    /* LOGIN CARD */
     .login-card {
-      background: white;
-      padding: 2rem 2.5rem;
+      position: relative;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
       border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      width: 360px;
+      padding: 2.5rem;
       text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      width: 360px;
+      z-index: 2;
+      animation: fadeInUp 1s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
       margin-bottom: 1.5rem;
       font-weight: 600;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     form {
@@ -63,76 +123,114 @@
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 0.8rem 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #d1d5db;
-      font-size: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 0.6rem;
+      border: none;
       outline: none;
-      transition: border-color 0.2s ease;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
     }
 
-    input[type="text"]:focus,
-    input[type="password"]:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 10px var(--accent);
     }
 
     button {
       background: var(--primary);
       color: white;
-      padding: 0.8rem 1.5rem;
+      padding: 0.9rem;
       border: none;
-      border-radius: 0.5rem;
+      border-radius: 0.6rem;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.2s ease;
-      font-weight: 500;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.3s ease;
     }
 
     button:hover {
       background: var(--primary-dark);
+      box-shadow: 0 0 18px var(--accent);
+      transform: translateY(-2px);
     }
 
     .error {
-      color: #dc2626;
+      color: #fca5a5;
       font-size: 0.9rem;
     }
 
+    /* FOOTER */
     footer {
-      background: #1e293b;
+      background: rgba(0, 0, 0, 0.25);
       color: #fff;
       text-align: center;
       padding: 0.8rem;
       font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    footer span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        width: 90%;
+        padding: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-<header>
-    <h1>Email-Claim Automation</h1>
-    <small>Environment: Development</small>
+<!-- Header -->
+<header style="display:flex; align-items:center; justify-content:space-between; background:#0a1a2f; color:#fff; padding:10px 20px;">
+    <div class="header-left" style="display:flex; align-items:center; gap:12px;">
+        <!-- LOGO -->
+        <img src="images/logo-white.png" alt="Logo" style="height:80px; width:auto;">
+        <h1 style="margin:0; font-size:1.6rem; font-weight:600;">
+            Email-Claim Automation <span style="color:#93c5fd;">Workbench</span>
+        </h1>
+    </div>
+    <div class="header-right" style="display:flex; align-items:center; gap:15px;">
+        <small style="font-size: 1rem; opacity: 0.9;">Environment: Development</small>
+    </div>
 </header>
-
+<!-- Main -->
 <main>
+    <!-- Floating bubbles -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+
     <div class="login-card">
-        <h2>Login to Continue</h2>
+        <h2>Login</h2>
 
-        <!-- Spring Security login form -->
         <form th:action="@{/login}" method="post">
-            <input type="text" name="username"  value="admin" placeholder="Username" required />
-            <input type="password" name="password" value="admin123" placeholder="Password" required />
+            <input type="text" name="username" value="admin" placeholder="👤 Username" required />
+            <input type="password" name="password" value="admin123" placeholder="🔒 Password" required />
 
-            <!-- Spring Security automatically exposes this on failed login -->
-            <p class="error" th:if="${param.error}">Invalid username or password.</p>
-            <p class="error" th:if="${param.logout}">You’ve been logged out successfully.</p>
+            <p class="error" th:if="${param.error}">⚠️ Invalid username or password.</p>
+            <p class="error" th:if="${param.logout}">✅ You’ve been logged out successfully.</p>
 
-            <button type="submit">Login</button>
+            <button type="submit">🚀 Login</button>
         </form>
     </div>
 </main>
 
+<!-- Footer -->
 <footer>
-    © 2025 Email-Claim Automation | Built for Sapiens InnovAIte Hackathon
+    © 2025 <span>Email-Claim Automation</span> | Built for Sapiens InnovAIte Hackathon
 </footer>
 </body>
 </html>
