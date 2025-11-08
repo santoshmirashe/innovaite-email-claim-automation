@@ -1,0 +1,6 @@
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="main-nav(activePage)">
+    <div id="nav-reports" class="nav-item"
+         th:classappend="${activePage == 'reports'} ? ' active' : ''">Reports</div>
+    <div id="nav-claim" class="nav-item"
+         th:classappend="${activePage == 'claim'} ? ' active' : ''">Create Claim</div>
+</nav>

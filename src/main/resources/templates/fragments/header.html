@@ -1,0 +1,13 @@
+<header xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" th:fragment="main-header">
+    <div class="header-left">
+        <img th:src="@{/images/logo-white.png}" alt="Logo" style="height:70px;width:auto;">
+        <h1>Email-Claim Automation <span style="color:#93c5fd;">Workbench</span></h1>
+    </div>
+
+    <div class="header-right">
+        <div class="profile">👤 <span sec:authentication="name">User</span></div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn">🚪 Logout</button>
+        </form>
+    </div>
+</header>
