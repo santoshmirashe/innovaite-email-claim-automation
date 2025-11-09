@@ -10,15 +10,18 @@ public class ClaimDTO {
     private LocalDateTime createdDate;
     private boolean success;
 
+    private Long id;
+
     public ClaimDTO() {}
 
     public ClaimDTO(String policyNumber, String customerName, String claimNumber,
-                    LocalDateTime createdDate, boolean success) {
+                    LocalDateTime createdDate, boolean success, Long id) {
         this.policyNumber = policyNumber;
         this.customerName = customerName;
         this.claimNumber = claimNumber;
         this.createdDate = createdDate;
         this.success = success;
+        this.id = id;
     }
 
     // Getters and Setters
@@ -28,6 +31,14 @@ public class ClaimDTO {
 
     public void setPolicyNumber(String policyNumber) {
         this.policyNumber = policyNumber;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCustomerName() {

@@ -84,10 +84,10 @@ public class OcrController {
         }
     }
 
-    @PostMapping("/retry-claim/{policyNumber}")
-    public ResponseEntity<ClaimDTO> retryClaim(@PathVariable String policyNumber) {
+    @PostMapping("/retry-claim/{id}")
+    public ResponseEntity<ClaimDTO> retryClaim(@PathVariable Long id) {
         try {
-            ClaimDTO updated = claimService.retryClaimProcessing(policyNumber);
+            ClaimDTO updated = claimService.retryClaimProcessing(id);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

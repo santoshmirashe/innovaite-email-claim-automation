@@ -24,6 +24,8 @@ public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, 
 
     Optional<InnovaiteClaim> findByPolicyNumber(String policyNumber);
 
+    Optional<InnovaiteClaim> findById(Long id);
+
     @Query("SELECT COUNT(c) FROM InnovaiteClaim c " +
             "WHERE c.createdDate BETWEEN :from AND :to")
     long getTotalClaims(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);

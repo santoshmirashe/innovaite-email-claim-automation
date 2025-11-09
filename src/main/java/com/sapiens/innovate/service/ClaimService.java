@@ -185,7 +185,8 @@ public class ClaimService {
                         c.getCustomerName(),
                         c.getClaimNumber(),
                         c.getCreatedDate(),
-                        c.getSuccess()
+                        c.getSuccess(),
+                        c.getId()
                 ))
                 .toList();
 
@@ -242,9 +243,9 @@ public class ClaimService {
         return innovaiteClaim;
     }
 
-    public ClaimDTO retryClaimProcessing(String policyNumber) {
+    public ClaimDTO retryClaimProcessing(Long id) {
         StringBuilder returnVal = new StringBuilder();
-        InnovaiteClaim claim = claimRepository.findByPolicyNumber(policyNumber)
+        InnovaiteClaim claim = claimRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Claim record not found in DB"));
         ClaimDataVO claimData = ClaimDataVO.builder()
                 .contactName(claim.getCustomerName())
@@ -270,7 +271,8 @@ public class ClaimService {
                 claim.getCustomerName(),
                 claim.getClaimNumber(),
                 claim.getCreatedDate(),
-                claim.getSuccess()
+                claim.getSuccess(),
+                claim.getId()
         );
     }
 

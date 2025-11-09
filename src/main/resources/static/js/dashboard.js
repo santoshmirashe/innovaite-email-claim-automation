@@ -284,26 +284,27 @@ function renderTable(claims) {
       <td>${c.createdDate || '-'}</td>
       <td>${c.success ? '✅' : '❌'}</td>
       <td style="text-align:center;">
-              ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}">🔄</button>` : '-'}
+              ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}" data-id="${c.id}">🔄</button>` : '-'}
         </td>
     </tr>
   `).join("");
 
   document.querySelectorAll(".retry-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
         const policyNumber = e.target.dataset.policyNumber;
-        await retryClaim(policyNumber);
+        await retryClaim(policyNumber,id);
       });
   });
 }
 
-async function retryClaim(policyNumber) {
+async function retryClaim(policyNumber,id) {
   if (!confirm(`Reprocess claim by ${policyNumber}?`)) return;
 
   document.getElementById("mask").style.display = "flex"; // show loader
 
   try {
-    const res = await fetch(`/api/retry-claim/${policyNumber}`, {
+    const res = await fetch(`/api/retry-claim/${id}`, {
       method: "POST"
     });
 

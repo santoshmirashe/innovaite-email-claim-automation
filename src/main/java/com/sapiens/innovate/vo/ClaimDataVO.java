@@ -2,6 +2,8 @@ package com.sapiens.innovate.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.sapiens.innovate.util.FlexibleLocalDateTimeDeserializer;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -36,7 +38,7 @@ public class ClaimDataVO {
     private String claimDescription;
 
     @NotNull(message = "Incident date is required")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = FlexibleLocalDateTimeDeserializer.class)
     @JsonProperty("incidentDate")
     private LocalDateTime incidentDate;
 

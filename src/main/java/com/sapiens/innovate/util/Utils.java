@@ -37,7 +37,15 @@ public class Utils {
                 try {
                     return LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
                 } catch (DateTimeParseException e3) {
-                    return null;
+                    try {
+                        return LocalDateTime.parse(value);
+                    } catch (DateTimeParseException e4) {
+                        try {
+                        return LocalDate.parse(value).atStartOfDay();
+                        } catch (DateTimeParseException e5) {
+                            return LocalDateTime.now();
+                        }
+                    }
                 }
             }
         }
