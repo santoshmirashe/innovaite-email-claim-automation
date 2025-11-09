@@ -212,7 +212,7 @@ document.getElementById('claimForm').addEventListener('submit', async (e) => {
     contactName: contactName.value,
     fromEmail: fromEmail.value,
     contactPhone: contactPhone.value,
-    incidentDate: incidentDate.value,
+    incidentDate: incidentDate.value ? `${incidentDate.value}T00:00:00.000` : null,
     claimAmount: claimAmount.value ? parseFloat(claimAmount.value) : null,
     claimDescription: claimDescription.value,
     summary: summary.value

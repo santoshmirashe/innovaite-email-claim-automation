@@ -38,7 +38,7 @@ public class ClaimDataVO {
     private String claimDescription;
 
     @NotNull(message = "Incident date is required")
-    @JsonDeserialize(using = FlexibleLocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     @JsonProperty("incidentDate")
     private LocalDateTime incidentDate;
 

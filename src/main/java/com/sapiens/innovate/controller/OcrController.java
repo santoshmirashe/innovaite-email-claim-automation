@@ -51,7 +51,7 @@ public class OcrController {
         }
     }
 
-    @PostMapping(value = "/create-claim")
+    @PostMapping(value = "/create-claim",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createClaim(@Valid @RequestBody ClaimDataVO claimData, BindingResult bindingResult) {
         StringBuilder returnVal = new StringBuilder();
         // Handle validation errors
