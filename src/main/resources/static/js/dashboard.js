@@ -212,13 +212,22 @@ document.getElementById('claimForm').addEventListener('submit', async (e) => {
     contactName: contactName.value,
     fromEmail: fromEmail.value,
     contactPhone: contactPhone.value,
-    incidentDate: incidentDate.value ? `${incidentDate.value}T00:00:00.000` : null,
+    incidentDate: incidentDate.value
+      ? (
+          incidentDate.value.includes('.')   // already has milliseconds
+            ? incidentDate.value
+            : incidentDate.value.length === 16
+              ? incidentDate.value + ":00.000" // missing seconds
+              : incidentDate.value + ".000"    // has seconds, missing ms
+        )
+      : null,
     claimAmount: claimAmount.value ? parseFloat(claimAmount.value) : null,
     claimDescription: claimDescription.value,
     summary: summary.value
   };
 
   try {
+    console.log("incidentDate being sent:", payload.incidentDate);
     const res = await fetch('/api/create-claim', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

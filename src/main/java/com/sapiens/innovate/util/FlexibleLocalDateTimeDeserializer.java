@@ -16,6 +16,10 @@ public class FlexibleLocalDateTimeDeserializer extends JsonDeserializer<LocalDat
         String value = p.getText().trim();
 
         if (value.isEmpty()) return null;
+        // Try full datetime with seconds and milliseconds
+        try {
+            return LocalDateTime.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+        } catch (DateTimeParseException ignored) { }
 
         // Try full datetime with seconds
         try {

@@ -44,10 +44,20 @@ public class ClaimService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public ClaimResponseVO raiseClaim(ClaimDataVO claimDataVO) {
+    public ClaimResponseVO raiseClaim(ClaimDataVO claimData) {
         String url = claimServiceUrl;
+        Map<String, Object> payload = Map.of(
+                "policyNumber", claimData.getPolicyNumber(),
+                "contactName", claimData.getContactName(),
+                "fromEmail", claimData.getFromEmail(),
+                "contactPhone", claimData.getContactPhone(),
+                "claimDescription", claimData.getClaimDescription(),
+                "claimAmount", claimData.getClaimAmount(),
+                "incidentDate", claimData.getIncidentDate().toLocalDate().toString(),
+                "summary", claimData.getSummary()
+        );
         ResponseEntity<ClaimResponseVO> response =
-                restTemplate.postForEntity(url, claimDataVO, ClaimResponseVO.class);
+                restTemplate.postForEntity(url, payload, ClaimResponseVO.class);
         return response.getBody();
     }
 
