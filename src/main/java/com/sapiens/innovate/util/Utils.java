@@ -14,6 +14,9 @@ import java.time.format.DateTimeParseException;
 
 public class Utils {
 
+    public static String[] requestPatterns = new String[]{"/","/login-page", "/css/**", "/js/**", "/images/**",
+            "/fragments/**","/auth/login","/homepage/**","/api/**","/register-page","/register", "/auth/register"};
+
     public static BigDecimal parseBigDecimal(String value) {
         try {
             if (value == null || value.isBlank()) return null;

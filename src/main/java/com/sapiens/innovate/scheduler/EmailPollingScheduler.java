@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 )
 public class EmailPollingScheduler {
 
+    private final AtomicBoolean enabled = new AtomicBoolean(false);
     @Autowired
     private ClaimService claimService;
 
@@ -39,6 +41,8 @@ public class EmailPollingScheduler {
      */
     @Scheduled(fixedDelayString = "${email.polling.interval.ms}")
     public void pollAndProcessEmails() {
+        if (!enabled.get()) return;
+
         if (isProcessing) {
             log.warn("Previous email processing still in progress, skipping this cycle");
             return;
@@ -78,4 +82,15 @@ public class EmailPollingScheduler {
             isProcessing = false;
         }
     }
+
+    public void startPolling() {
+        enabled.set(true);
+    }
+
+
+    public void stopPolling() {
+        enabled.set(false);
+    }
+
+    public boolean isPollingEnabled() { return enabled.get(); }
 }
