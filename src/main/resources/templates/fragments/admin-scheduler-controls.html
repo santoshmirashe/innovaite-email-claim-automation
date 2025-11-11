@@ -1,0 +1,83 @@
+<!-- fragments/admin-scheduler-controls.html -->
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="admin-scheduler-controls">
+    <div id="adminSchedulerControls" style="display:none;margin:1rem 0; padding:1rem; border:1px solid #ddd; border-radius:10px; background:#f9fafb; box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <h3 style="margin-top:0; color:#1e3a8a; font-weight:600;">📧 Email Polling Scheduler</h3>
+
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <button id="startScheduler"
+                    style="padding:8px 14px; background:#16a34a; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:500;">
+                ▶️ Start
+            </button>
+            <button id="stopScheduler"
+                    style="padding:8px 14px; background:#dc2626; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:500;">
+                ⏹ Stop
+            </button>
+
+            <div id="schedulerStateBadge"
+                 style="display:inline-flex; align-items:center; gap:6px; font-size:0.95rem; font-weight:600; color:#374151;">
+        <span id="statusDot"
+              style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#9ca3af;"></span>
+                <span id="schedulerState">Checking...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!window.Auth || !Auth.isAdmin()) return; // only for admin
+      const ctrl = document.getElementById('adminSchedulerControls');
+      if (ctrl) ctrl.style.display = 'block';
+
+      const statusText = document.getElementById('schedulerState');
+      const statusDot = document.getElementById('statusDot');
+
+      function setBadge(enabled) {
+        if (enabled) {
+          statusText.textContent = 'Active';
+          statusDot.style.background = '#16a34a'; // green
+        } else {
+          statusText.textContent = 'Stopped';
+          statusDot.style.background = '#dc2626'; // red
+        }
+      }
+
+      async function updateState() {
+        try {
+          const r = await Auth.fetchWithAuth('/admin/scheduler/state');
+          if (r.ok) {
+            const s = await r.json();
+            setBadge(s.enabled);
+          } else {
+            statusText.textContent = 'Unknown';
+            statusDot.style.background = '#9ca3af'; // gray
+          }
+        } catch (e) {
+          statusText.textContent = 'Error';
+          statusDot.style.background = '#9ca3af';
+        }
+      }
+
+      document.getElementById('startScheduler').addEventListener('click', async () => {
+        const resp = await Auth.fetchWithAuth('/admin/scheduler/start', { method: 'POST' });
+        if (resp.ok) {
+          setBadge(true);
+          alert('✅ Scheduler started');
+        } else {
+          alert('⚠️ Failed to start scheduler');
+        }
+      });
+
+      document.getElementById('stopScheduler').addEventListener('click', async () => {
+        const resp = await Auth.fetchWithAuth('/admin/scheduler/stop', { method: 'POST' });
+        if (resp.ok) {
+          setBadge(false);
+          alert('🛑 Scheduler stopped');
+        } else {
+          alert('⚠️ Failed to stop scheduler');
+        }
+      });
+
+      updateState(); // initial check
+    });
+  </script>
+</div>

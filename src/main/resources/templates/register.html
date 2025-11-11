@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Email-Claim Automation — Register</title>
+    <link rel="stylesheet" th:href="@{'/css/login.css'}"/>
+</head>
+<body>
+<header style="display:flex; align-items:center; justify-content:space-between; background:#0a1a2f; color:#fff; padding:10px 20px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+        <img src="images/logo-white.png" alt="Logo" style="height:70px; width:auto;">
+        <h1>Email-Claim Automation <span style="color:#93c5fd;">Workbench</span></h1>
+    </div>
+</header>
+
+<main>
+    <div class="login-card" style="margin:auto; margin-top:50px;">
+        <h2>Register New Account</h2>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="👤 Username" required />
+            <input type="password" id="password" placeholder="🔒 Password" required />
+            <input type="password" id="confirmPassword" placeholder="🔒 Confirm Password" required />
+            <button type="submit">📝 Register</button>
+            <p id="registerMessage" style="margin-top:1rem; color:#f8fafc; font-size:0.9rem;"></p>
+        </form>
+
+        <p style="margin-top:1rem; text-align:center;">
+            Already have an account?
+            <a href="/login-page" style="color:#93c5fd;">Login here</a>
+        </p>
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: main-footer"></div>
+
+<script th:src="@{'/js/auth.js'}"></script>
+<script th:src="@{'/js/register.js'}"></script>
+</body>
+</html>

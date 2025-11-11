@@ -1,16 +1,42 @@
-<header xmlns:th="http://www.thymeleaf.org"
-        xmlns:sec="http://www.w3.org/1999/xhtml"
-        th:fragment="main-header">
-
-    <div class="header-left">
+<!-- fragments/header.html -->
+<header xmlns:th="http://www.thymeleaf.org" th:fragment="main-header">
+    <div class="header-left" style="display:flex;align-items:center;gap:12px;">
         <img th:src="@{/images/logo-white.png}" alt="Logo" style="height:70px;width:auto;">
         <h1>Email-Claim Automation <span style="color:#93c5fd;">Workbench</span></h1>
     </div>
 
-    <div class="header-right">
-        <div class="profile">👤 <span sec:authentication="name">User</span></div>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="logout-btn">🚪 Logout</button>
-        </form>
+    <div class="header-right" style="display:flex;align-items:center;gap:16px;">
+        <div id="userInfo" style="font-size:1rem;color:#fff;"></div>
+
+        <button id="logoutBtn"
+                style="display:none;padding:8px 12px;background:#ef4444;color:white;
+                     border:none;border-radius:6px;cursor:pointer;font-weight:500;">
+            Logout
+        </button>
     </div>
+
+    <script src="/js/auth.js" defer></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      const userInfo = document.getElementById('userInfo');
+      const token = Auth.getToken();
+
+      if (token) {
+        const username = Auth.getUsername();
+        const role = Auth.getRole();
+
+        userInfo.innerHTML = `👤 ${username} (${role === 'ROLE_ADMIN' ? 'Admin' : 'User'})`;
+        logoutBtn.style.display = 'inline-block';
+      } else {
+        userInfo.textContent = 'Guest';
+        logoutBtn.style.display = 'none';
+      }
+
+      logoutBtn.addEventListener('click', () => {
+        Auth.logout();
+        window.location.href = '/login-page'; // redirect after logout
+      });
+    });
+  </script>
 </header>
