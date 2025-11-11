@@ -1,7 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
-const tabAnalytics = document.getElementById("tab-analytics");
-const tabHistory   = document.getElementById("tab-history");
-const tabReport    = document.getElementById("tab-report");
+  const role = Auth.getRole();
+  const username = Auth.getUsername();
+
+  const tabAnalytics = document.getElementById("tab-analytics");
+  const tabHistory   = document.getElementById("tab-history");
+  const tabReport    = document.getElementById("tab-report");
+  const tabAdmin     = document.getElementById("tab-admin");
+
+  if (role !== "ROLE_ADMIN") {
+    tabAnalytics?.classList.add("hidden");
+    tabHistory?.classList.add("hidden");
+    tabAdmin?.classList.add("hidden");
+  } else {
+    tabAdmin.style.display = "inline-block";
+  }
+
+  const style = document.createElement("style");
+  style.innerHTML = `.hidden { display: none !important; }`;
+  document.head.appendChild(style);
 
 const panelAnalytics = document.getElementById("panel-analytics");
 const panelHistory   = document.getElementById("panel-history");
