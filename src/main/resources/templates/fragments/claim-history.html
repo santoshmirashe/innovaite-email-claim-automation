@@ -1,7 +1,13 @@
-<!-- fragments/claim-history.html -->
-<div  xmlns:th="http://www.thymeleaf.org" th:fragment="claim-history" >
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="claim-history">
     <!-- ✅ Include Filter Bar -->
     <div th:replace="fragments/filter-bar-history :: filter-bar"></div>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-container" style="margin: 10px 0; text-align: right;">
+        <input type="text" id="claimHistorySearchInput" placeholder="Search..."
+               style="padding: 6px 10px; width: 250px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
     <div class="table-container">
         <table id="claimTable">
             <thead>

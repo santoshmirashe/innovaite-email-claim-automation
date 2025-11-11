@@ -357,5 +357,123 @@ nextBtn.addEventListener("click", () => {
 document.getElementById("filterBtnHistory").addEventListener("click", () => fetchClaims(0));
 document.getElementById("refreshBtnHistory").addEventListener("click", () => fetchClaims(currentPage));
 document.getElementById("refreshBtn").addEventListener("click", () => fetchClaimStats());
+/*Search*/
+const claimHistorySearch = {
+        input: document.getElementById("claimHistorySearchInput"),
+        tableBody: document.getElementById("claimTableBody"),
+        pageInfo: document.getElementById("pageInfo"),
+        btnPrev: document.getElementById("prevPage"),
+        btnNext: document.getElementById("nextPage"),
 
+        // Pagination / search state
+        limit: 5,
+        offset: 0,
+        totalCount: 0,
+        totalPages: 0,
+        currentSearch: "",
+        debounceTimer: null,
+
+        async fetchData() {
+            const from = document.getElementById("fromDateHistory")?.value || "";
+            const to = document.getElementById("toDateHistory")?.value || "";
+            const search = this.currentSearch?.trim() || "";
+
+            const params = new URLSearchParams({
+                search,
+                from,
+                to,
+                offset: this.offset.toString(),
+                limit: this.limit.toString()
+            });
+
+            try {
+                const response = await fetch(`/api/search?${params.toString()}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+
+                // ✅ Correct mapping for backend structure
+                this.totalCount = data.totalRecords || 0;
+                this.totalPages = data.totalPages || 0;
+
+                // ✅ Render the actual claim list
+                this.renderTable(data.claims || []);
+                updatePagination(data);
+
+                console.log(`Fetched ${this.totalCount} records, rendering ${data.claims?.length || 0}`);
+            } catch (error) {
+                console.error("Error fetching claims:", error);
+                this.tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Error loading claims</td></tr>`;
+            }
+        },
+
+        renderTable(rows) {
+            if (!rows.length) {
+                this.tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No results found</td></tr>`;
+                return;
+            }
+
+            this.tableBody.innerHTML = rows.map(c => `
+                <tr>
+                    <td>${c.policyNumber || "-"}</td>
+                    <td>${c.customerName || "-"}</td>
+                    <td>${c.claimNumber || "-"}</td>
+                    <td>${c.createdDate || "-"}</td>
+                    <td>${c.success ? "✅" : "❌"}</td>
+                    <td style="text-align:center;">
+                                  ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}" data-id="${c.id}">🔄</button>` : '-'}
+                            </td>
+                </tr>
+            `).join("");
+
+            document.querySelectorAll(".retry-btn").forEach(btn => {
+                  btn.addEventListener("click", async (e) => {
+                    const id = e.target.dataset.id;
+                    const policyNumber = e.target.dataset.policyNumber;
+                    await retryClaim(policyNumber,id);
+                  });
+              });
+        },
+
+        handleSearchInput() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                const value = this.input.value.trim();
+
+                if (value.length >= 3) {
+                    this.currentSearch = value;
+                    this.offset = 0;
+                    this.fetchData();
+                } else if (value.length === 0) {
+                    this.currentSearch = "";
+                    this.offset = 0;
+                    this.fetchData(); // only date filter
+                }
+                // <3 chars: do nothing
+            }, 400);
+        },
+
+        handlePrevPage() {
+            if (this.offset >= this.limit) {
+                this.offset -= this.limit;
+                this.fetchData();
+            }
+        },
+
+        handleNextPage() {
+            const nextOffset = this.offset + this.limit;
+            if (nextOffset < this.totalCount) {
+                this.offset = nextOffset;
+                this.fetchData();
+            }
+        },
+
+        init() {
+            this.input.addEventListener("keyup", () => this.handleSearchInput());
+            this.btnPrev.addEventListener("click", () => this.handlePrevPage());
+            this.btnNext.addEventListener("click", () => this.handleNextPage());
+            this.fetchData(); // initial load
+        }
+    };
+
+    claimHistorySearch.init();
 });

@@ -1,6 +1,6 @@
 package com.sapiens.innovate.controller;
 
-import com.sapiens.innovate.entity.InnovaiteClaim;
+
 import com.sapiens.innovate.service.ClaimService;
 import com.sapiens.innovate.vo.PaginatedClaimResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -52,9 +50,25 @@ public class ClaimStatsController {
             LocalDate to,
 
             @RequestParam(defaultValue = "0") Integer offset,
-            @RequestParam(defaultValue = "10") Integer limit) {
+            @RequestParam(defaultValue = "5") Integer limit) {
 
-        PaginatedClaimResponse response = claimService.getClaimsPaginated(LocalDate.from(from.atStartOfDay()), LocalDate.from(to.atTime(23,59,59)), offset, limit);
+        PaginatedClaimResponse response = claimService.getClaimsPaginated(LocalDate.from(from.atStartOfDay()), LocalDate.from(to.atTime(23,59,59)), offset, limit,null);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/api/search")
+    public ResponseEntity<PaginatedClaimResponse> searchClaims(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate to,
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(defaultValue = "5") Integer limit) {
+        PaginatedClaimResponse response = claimService.getClaimsPaginated(LocalDate.from(from.atStartOfDay()), LocalDate.from(to.atTime(23,59,59)), offset, limit,search);
+
         return ResponseEntity.ok(response);
     }
 

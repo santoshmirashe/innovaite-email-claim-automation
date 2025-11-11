@@ -182,12 +182,17 @@ public class ClaimService {
         );
     }
 
-    public PaginatedClaimResponse getClaimsPaginated(LocalDate from, LocalDate to, int offset, int limit) {
+    public PaginatedClaimResponse getClaimsPaginated(LocalDate from, LocalDate to, int offset, int limit,String search) {
         LocalDateTime fromDateTime = (from != null) ? from.atStartOfDay() : LocalDate.now().atStartOfDay();
         LocalDateTime toDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDate.now().atTime(LocalTime.MAX);
 
         Pageable pageable = PageRequest.of(offset / limit, limit);
         Page<InnovaiteClaim> page = claimRepository.findClaims(fromDateTime, toDateTime, pageable);
+        if (search != null && !search.trim().isEmpty() && search.length() >= 3) {
+            page = claimRepository.findClaimsBySearch(search.trim(), fromDateTime, toDateTime, pageable);
+        } else {
+            page = claimRepository.findClaims(fromDateTime, toDateTime, pageable);
+        }
 
         List<ClaimDTO> claimDTOs = page.getContent().stream()
                 .map(c -> new ClaimDTO(

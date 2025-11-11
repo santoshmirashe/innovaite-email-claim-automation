@@ -63,4 +63,17 @@ public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, 
             Pageable pageable
     );
 
+    @Query("""
+        SELECT c FROM InnovaiteClaim c
+        WHERE (LOWER(c.policyNumber) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(c.customerName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(c.claimNumber) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND c.createdDate BETWEEN :fromDate AND :toDate
+        ORDER BY c.createdDate DESC
+    """)
+    Page<InnovaiteClaim> findClaimsBySearch(@Param("search") String search,
+                                            @Param("fromDate") LocalDateTime fromDate,
+                                            @Param("toDate") LocalDateTime toDate,
+                                            Pageable pageable);
+
 }
