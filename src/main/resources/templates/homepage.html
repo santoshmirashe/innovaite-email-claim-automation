@@ -30,7 +30,9 @@
             <div th:replace="fragments/claim-form :: claim-form"></div>
         </section>
 
-        <div th:replace="fragments/admin-scheduler-controls :: admin-scheduler-controls"></div>
+        <section id="panel-admin" class="panel">
+            <div th:replace="fragments/admin-scheduler-controls :: adminSchedulerFragment"></div>
+        </section>
 
         <div id="mask"><div></div></div>
 

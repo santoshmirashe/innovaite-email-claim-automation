@@ -1,83 +1,98 @@
 <!-- fragments/admin-scheduler-controls.html -->
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="admin-scheduler-controls">
-    <div id="adminSchedulerControls" style="display:none;margin:1rem 0; padding:1rem; border:1px solid #ddd; border-radius:10px; background:#f9fafb; box-shadow:0 2px 6px rgba(0,0,0,0.05);">
-        <h3 style="margin-top:0; color:#1e3a8a; font-weight:600;">📧 Email Polling Scheduler</h3>
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="adminSchedulerFragment">
 
-        <div style="display:flex; align-items:center; gap:1rem;">
-            <button id="startScheduler"
-                    style="padding:8px 14px; background:#16a34a; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:500;">
-                ▶️ Start
-            </button>
-            <button id="stopScheduler"
-                    style="padding:8px 14px; background:#dc2626; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:500;">
-                ⏹ Stop
-            </button>
+    <h3>⚙️ Email Polling Scheduler</h3>
 
-            <div id="schedulerStateBadge"
-                 style="display:inline-flex; align-items:center; gap:6px; font-size:0.95rem; font-weight:600; color:#374151;">
-        <span id="statusDot"
-              style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#9ca3af;"></span>
-                <span id="schedulerState">Checking...</span>
-            </div>
+    <div id="adminSchedulerControls" class="scheduler-container" style="margin-top:1rem; display:none;">
+        <div class="scheduler-actions">
+            <button id="startScheduler">▶️ Start Polling</button>
+            <button id="stopScheduler">⏹️ Stop Polling</button>
+            <span id="schedulerState" class="scheduler-status" style="margin-left:0.6rem;color:#555"></span>
         </div>
     </div>
 
+    <style>
+    .scheduler-container {
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .scheduler-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .scheduler-actions button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .scheduler-actions button:hover {
+      background: #1e40af;
+    }
+
+    .scheduler-status {
+      font-weight: 500;
+    }
+  </style>
+
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!window.Auth || !Auth.isAdmin()) return; // only for admin
-      const ctrl = document.getElementById('adminSchedulerControls');
-      if (ctrl) ctrl.style.display = 'block';
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!Auth.isAdmin()) return; // Only for admins
 
-      const statusText = document.getElementById('schedulerState');
-      const statusDot = document.getElementById('statusDot');
+    const adminPanel = document.getElementById("panel-admin");
+    const controls = document.getElementById("adminSchedulerControls");
 
-      function setBadge(enabled) {
-        if (enabled) {
-          statusText.textContent = 'Active';
-          statusDot.style.background = '#16a34a'; // green
-        } else {
-          statusText.textContent = 'Stopped';
-          statusDot.style.background = '#dc2626'; // red
-        }
-      }
+    function initSchedulerControls() {
+      if (!controls || controls.dataset.initialized) return;
+      controls.dataset.initialized = true;
+      controls.style.display = "block";
 
       async function updateState() {
         try {
           const r = await Auth.fetchWithAuth('/admin/scheduler/state');
           if (r.ok) {
             const s = await r.json();
-            setBadge(s.enabled);
-          } else {
-            statusText.textContent = 'Unknown';
-            statusDot.style.background = '#9ca3af'; // gray
+            document.getElementById('schedulerState').innerText =
+              s.enabled ? '🟢 Enabled' : '🔴 Disabled';
           }
         } catch (e) {
-          statusText.textContent = 'Error';
-          statusDot.style.background = '#9ca3af';
+          console.error("Scheduler state fetch failed:", e);
         }
       }
 
       document.getElementById('startScheduler').addEventListener('click', async () => {
         const resp = await Auth.fetchWithAuth('/admin/scheduler/start', { method: 'POST' });
-        if (resp.ok) {
-          setBadge(true);
-          alert('✅ Scheduler started');
-        } else {
-          alert('⚠️ Failed to start scheduler');
-        }
+        alert(resp.ok ? '✅ Scheduler started' : '❌ Failed to start');
+        updateState();
       });
 
       document.getElementById('stopScheduler').addEventListener('click', async () => {
         const resp = await Auth.fetchWithAuth('/admin/scheduler/stop', { method: 'POST' });
-        if (resp.ok) {
-          setBadge(false);
-          alert('🛑 Scheduler stopped');
-        } else {
-          alert('⚠️ Failed to stop scheduler');
-        }
+        alert(resp.ok ? '🛑 Scheduler stopped' : '❌ Failed to stop');
+        updateState();
       });
 
-      updateState(); // initial check
+      updateState();
+    }
+
+    // Observe Admin tab activation
+    const observer = new MutationObserver(() => {
+      if (adminPanel.classList.contains("active")) {
+        initSchedulerControls();
+      }
     });
+    observer.observe(adminPanel, { attributes: true, attributeFilter: ["class"] });
+  });
   </script>
-</div>
+
+</section>

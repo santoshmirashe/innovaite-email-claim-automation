@@ -22,21 +22,24 @@ document.addEventListener("DOMContentLoaded", () => {
 const panelAnalytics = document.getElementById("panel-analytics");
 const panelHistory   = document.getElementById("panel-history");
 const panelReport    = document.getElementById("panel-report");
+const panelAdmin     = document.getElementById("panel-admin");
+
 
 function activateTab(tabName) {
-  // Remove 'active' from all tabs and panels
-  [tabAnalytics, tabHistory, tabReport].forEach(t => t.classList.remove("active"));
-  [panelAnalytics, panelHistory, panelReport].forEach(p => p.classList.remove("active"));
+  [tabAnalytics, tabHistory, tabReport, tabAdmin].forEach(t => t.classList.remove("active"));
+  [panelAnalytics, panelHistory, panelReport, panelAdmin].forEach(p => p.classList.remove("active"));
 
-  // Activate chosen tab
-  if (tabName === "analytics") {
+  if (tabName === "admin") {
+    tabAdmin.classList.add("active");
+    panelAdmin.classList.add("active");
+  } else if (tabName === "analytics") {
     tabAnalytics.classList.add("active");
     panelAnalytics.classList.add("active");
-    fetchClaimStats?.(); // refresh analytics data
+    fetchClaimStats?.();
   } else if (tabName === "history") {
     tabHistory.classList.add("active");
     panelHistory.classList.add("active");
-    fetchClaims?.(0); // load paginated history
+    fetchClaims?.(0);
   } else {
     tabReport.classList.add("active");
     panelReport.classList.add("active");
@@ -46,6 +49,7 @@ function activateTab(tabName) {
 tabAnalytics.addEventListener("click", () => activateTab("analytics"));
 tabHistory.addEventListener("click",   () => activateTab("history"));
 tabReport.addEventListener("click",    () => activateTab("report"));
+tabAdmin.addEventListener("click", () => activateTab("admin"));
 
 // Default tab on load
 activateTab("analytics");
