@@ -1,7 +1,7 @@
 (function () {
 
     /***** CONFIG *****/
-    const AUTO_CLOSE_MS = 10000;    // auto-close after 10s
+    const AUTO_CLOSE_MS = 60000;    // auto-close after 10s
     const TYPING_SPEED = 24;        // ms per character for AI typing simulation
     const MIN_WIDTH = 260;
     const MIN_HEIGHT = 200;
