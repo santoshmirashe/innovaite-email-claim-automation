@@ -144,7 +144,7 @@ const html = `
     }
 </style>
 
-<div id="chatbot-fab" aria-label="Chat with Elon" role="button" tabindex="0">💬</div>
+<div id="chatbot-fab" aria-label="Chat with Elon" role="button" tabindex="0">🐶</div>
 
 <div id="chatbot-box" role="dialog" aria-label="Chat with Elon" aria-hidden="true">
     <div id="chatbot-header">
