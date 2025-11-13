@@ -41,6 +41,11 @@
             <p class="error" th:if="${param.logout}">✅ You’ve been logged out successfully.</p>
 
             <button type="submit">🚀 Login</button>
+
+            <!-- Add this -->
+            <div class="create-account">
+                <a th:href="@{/register-page}">Create a new account</a>
+            </div>
         </form>
     </div>
 </main>
