@@ -67,10 +67,15 @@ window.Auth = (function () {
 
   // convenience wrapper to include Authorization header
   async function fetchWithAuth(url, opts = {}) {
-    opts.headers = opts.headers || {};
-    const token = getToken();
-    if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-    return fetch(url, opts);
+  try {
+        document.getElementById("mask").style.display = "flex";
+        opts.headers = opts.headers || {};
+        const token = getToken();
+        if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+        return fetch(url, opts);
+       } finally {
+             document.getElementById("mask").style.display = "none";
+       }
   }
 
   return {
