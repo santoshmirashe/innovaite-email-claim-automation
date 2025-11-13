@@ -18,10 +18,29 @@
     <div class="login-card" style="margin:auto; margin-top:50px;">
         <h2>Register New Account</h2>
         <form id="registerForm">
+
             <input type="text" id="username" placeholder="👤 Username" required />
-            <input type="password" id="password" placeholder="🔒 Password" required />
-            <input type="password" id="confirmPassword" placeholder="🔒 Confirm Password" required />
+
+            <!-- Password -->
+            <div class="password-wrapper" style="position: relative;">
+                <input type="password" id="password" placeholder="🔒 Password" required />
+                <span class="toggle-eye" data-target="password"
+                      style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+            👁️
+        </span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="password-wrapper" style="position: relative; margin-top:8px;">
+                <input type="password" id="confirmPassword" placeholder="🔒 Confirm Password" required />
+                <span class="toggle-eye" data-target="confirmPassword"
+                      style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+            👁️
+        </span>
+            </div>
+
             <button type="submit">📝 Register</button>
+
             <p id="registerMessage" style="margin-top:1rem; color:#f8fafc; font-size:0.9rem;"></p>
         </form>
 
@@ -36,5 +55,16 @@
 
 <script th:src="@{'/js/auth.js'}"></script>
 <script th:src="@{'/js/register.js'}"></script>
+<script>
+    document.querySelectorAll(".toggle-eye").forEach(icon => {
+        icon.addEventListener("click", () => {
+            const input = document.getElementById(icon.dataset.target);
+            const isHidden = input.type === "password";
+
+            input.type = isHidden ? "text" : "password";
+            icon.textContent = isHidden ? "🙈" : "👁️";
+        });
+    });
+</script>
 </body>
 </html>
