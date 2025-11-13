@@ -35,6 +35,7 @@ function activateTab(tabName) {
   } else if (tabName === "analytics") {
     tabAnalytics.classList.add("active");
     panelAnalytics.classList.add("active");
+    setDefaultDates?.();
     fetchClaimStats?.();
   } else if (tabName === "history") {
     tabHistory.classList.add("active");
@@ -59,12 +60,26 @@ activateTab("analytics");
 //Analytics (Claim Stats)
 
 function setDefaultDates() {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('fromDate').value = today;
-  document.getElementById('toDate').value = today;
-  document.getElementById('fromDateHistory').value = today;
-    document.getElementById('toDateHistory').value = today;
+    const today = new Date();
+    const fiveDaysBefore = new Date(today);
+    fiveDaysBefore.setDate(today.getDate() - 5);
+
+    const formattedFrom = fiveDaysBefore.toISOString().split("T")[0];
+    const formattedTo = today.toISOString().split("T")[0];
+
+    function setIfEmpty(id, value) {
+        const el = document.getElementById(id);
+        if (el && (!el.value || el.value.trim() === "")) {
+            el.value = value;
+        }
+    }
+
+    setIfEmpty('fromDate', formattedFrom);
+    setIfEmpty('toDate', formattedTo);
+    setIfEmpty('fromDateHistory', formattedFrom);
+    setIfEmpty('toDateHistory', formattedTo);
 }
+
 
 async function fetchClaimStats() {
   document.getElementById("mask").style.display = "flex";
