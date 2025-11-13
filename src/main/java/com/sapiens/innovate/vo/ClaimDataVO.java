@@ -2,8 +2,8 @@ package com.sapiens.innovate.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.sapiens.innovate.util.AnalysisResult;
 import com.sapiens.innovate.util.FlexibleLocalDateTimeDeserializer;
-import com.sapiens.innovate.util.PdfAnalysisResult;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -53,8 +53,8 @@ public class ClaimDataVO {
     // ------------------------------------------------------
     // ADDING PDF FORENSICS RESULT INTO THE CLAIM RESPONSE
     // ------------------------------------------------------
-    @JsonProperty("pdfAnalysisResult")
-    private PdfAnalysisResult pdfAnalysisResult;
+    @JsonProperty("analysisResult")
+    private AnalysisResult pdfAnalysisResult;
 
     @Override
     public String toString() {

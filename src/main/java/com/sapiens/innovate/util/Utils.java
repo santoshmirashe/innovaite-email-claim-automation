@@ -10,8 +10,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.tika.Tika;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -161,4 +163,47 @@ public class Utils {
             return false;
         }
     }
+    public static boolean isRealImage(File file) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] header = new byte[12];
+            int read = fis.read(header);
+            if (read < 12) return false;
+
+            // JPEG
+            if (header[0] == (byte)0xFF && header[1] == (byte)0xD8)
+                return true;
+
+            // PNG
+            if (header[0] == (byte)0x89 && header[1] == 'P' && header[2] == 'N' && header[3] == 'G')
+                return true;
+
+            // GIF
+            if (header[0] == 'G' && header[1] == 'I' && header[2] == 'F')
+                return true;
+
+            // BMP
+            if (header[0] == 'B' && header[1] == 'M')
+                return true;
+
+            // WEBP (RIFF....WEBP)
+            if (header[0] == 'R' && header[1] == 'I' && header[2] == 'F' && header[8] == 'W'
+                    && header[9] == 'E' && header[10] == 'B' && header[11] == 'P')
+                return true;
+
+            return false;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public static boolean isImageMime(File file) {
+        try {
+            Tika tika = new Tika();
+            String mime = tika.detect(file);
+            return mime.startsWith("image/");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

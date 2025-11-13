@@ -290,8 +290,8 @@ fileInput.addEventListener("change", () => {
     if (xhr.status === 200) {
       try {
         const responseData = JSON.parse(xhr.responseText);
-        if (responseData.pdfAnalysisResult) {
-            showPdfAnalysis(responseData.pdfAnalysisResult);
+        if (responseData.analysisResult) {
+            showPdfAnalysis(responseData.analysisResult);
         }
         Object.entries(responseData).forEach(([key, value]) => {
           const field = document.getElementById(key);

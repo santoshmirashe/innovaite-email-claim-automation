@@ -2,7 +2,7 @@ package com.sapiens.innovate.controller;
 
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.service.*;
-import com.sapiens.innovate.util.PdfAnalysisResult;
+import com.sapiens.innovate.util.AnalysisResult;
 import com.sapiens.innovate.vo.ClaimDTO;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
@@ -28,7 +28,7 @@ public class OcrController {
     protected GPTProcessorService gptProcessor;
 
     @Autowired
-    PdfForensicsService pdfForensicsService;
+    ForensicsDispatcherService forensicsDispatcherService;
 
     @Autowired
     protected ClaimService claimService;
@@ -44,7 +44,7 @@ public class OcrController {
             file.transferTo(convFile);
             String text = ocrService.extractTextFromFile(convFile);
             ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
-            PdfAnalysisResult result = pdfForensicsService.evaluatePdf(convFile);
+            AnalysisResult result = forensicsDispatcherService.analyze(convFile);
             claimDataVO.setPdfAnalysisResult(result);
             return ResponseEntity.ok(claimDataVO.toString());
         } catch (Exception e) {

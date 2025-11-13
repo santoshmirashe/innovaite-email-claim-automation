@@ -1,6 +1,6 @@
 package com.sapiens.innovate.service;
 
-import com.sapiens.innovate.util.PdfAnalysisResult;
+import com.sapiens.innovate.util.AnalysisResult;
 import org.apache.pdfbox.cos.COSDocument;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.*;
@@ -17,8 +17,8 @@ import static com.sapiens.innovate.util.Utils.*;
 @Service
 public class PdfForensicsService {
 
-    public PdfAnalysisResult evaluatePdf(File file) {
-        PdfAnalysisResult result = new PdfAnalysisResult();
+    public AnalysisResult evaluatePdf(File file) {
+        AnalysisResult result = new AnalysisResult();
         // 0. Actual PDF magic number check
         if (!isPdfFile(file)) {
             result.addFinding("Not a PDF file", 5);
@@ -66,7 +66,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 1. Metadata mismatch
     // --------------------------------------------------------------------------
-    private void checkMetadataMismatch(PDDocument doc, PdfAnalysisResult result) {
+    private void checkMetadataMismatch(PDDocument doc, AnalysisResult result) {
         try {
             PDDocumentInformation info = doc.getDocumentInformation();
 
@@ -83,7 +83,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 2. Suspicious PDF editors (CamScanner, ILovePDF, Photoshop, etc.)
     // --------------------------------------------------------------------------
-    private void checkSuspiciousProducers(PDDocument doc, PdfAnalysisResult result) {
+    private void checkSuspiciousProducers(PDDocument doc, AnalysisResult result) {
         try {
             String producer = doc.getDocumentInformation().getProducer();
             if (producer == null) return;
@@ -104,7 +104,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 3. Detect inserted images (converted images instead of text)
     // --------------------------------------------------------------------------
-    private void checkInsertedImages(PDDocument doc, PdfAnalysisResult result) {
+    private void checkInsertedImages(PDDocument doc, AnalysisResult result) {
         try {
             int imageCount = 0;
 
@@ -129,7 +129,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 4. Missing text layers (pure image PDF)
     // --------------------------------------------------------------------------
-    private void checkMissingTextLayers(PDDocument doc, PdfAnalysisResult result) {
+    private void checkMissingTextLayers(PDDocument doc, AnalysisResult result) {
         try {
             PDFTextStripper stripper = new PDFTextStripper();
             String text = stripper.getText(doc);
@@ -144,7 +144,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 5. Digital signature tampering
     // --------------------------------------------------------------------------
-    private void checkSignatureTampering(PDDocument doc, PdfAnalysisResult result) {
+    private void checkSignatureTampering(PDDocument doc, AnalysisResult result) {
         try {
             List<PDSignature> signatures = doc.getSignatureDictionaries();
             if (signatures.isEmpty()) {
@@ -164,7 +164,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 6. Detect re-exported PDF (missing metadata + image heavy)
     // --------------------------------------------------------------------------
-    private void checkReExportedPdf(PDDocument doc, PdfAnalysisResult result) {
+    private void checkReExportedPdf(PDDocument doc, AnalysisResult result) {
         PDDocumentInformation info = doc.getDocumentInformation();
 
         if (info.getCreator() == null && info.getProducer() == null) {
@@ -175,7 +175,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 7. Incremental updates (true edit history)
     // --------------------------------------------------------------------------
-    private void checkIncrementalUpdates(PDDocument doc, PdfAnalysisResult result) {
+    private void checkIncrementalUpdates(PDDocument doc, AnalysisResult result) {
         try {
             COSDocument cos = doc.getDocument();
             if (cos != null && cos.getXrefTable().size() > 100) {
@@ -187,7 +187,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 8. Detect pages added/removed (page size mismatch etc.)
     // --------------------------------------------------------------------------
-    private void checkPageInsertDelete(PDDocument doc, PdfAnalysisResult result) {
+    private void checkPageInsertDelete(PDDocument doc, AnalysisResult result) {
         Set<String> pageSizes = new HashSet<>();
 
         for (PDPage page : doc.getPages()) {
@@ -202,7 +202,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 9. Detect image manipulation (pixel inconsistencies)
     // --------------------------------------------------------------------------
-    private void checkImageManipulation(PDDocument doc, PdfAnalysisResult result, File file) {
+    private void checkImageManipulation(PDDocument doc, AnalysisResult result, File file) {
         try {
             BufferedImage img = ImageIO.read(file);
             if (img == null) return;
@@ -230,7 +230,7 @@ public class PdfForensicsService {
     // --------------------------------------------------------------------------
     // 10. Final scoring classification
     // --------------------------------------------------------------------------
-    private void addFinalScoreClassification(PdfAnalysisResult result) {
+    private void addFinalScoreClassification(AnalysisResult result) {
 
         int score = result.getFraudScore();
 
