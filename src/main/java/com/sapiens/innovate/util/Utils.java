@@ -5,12 +5,20 @@ import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
 import com.sapiens.innovate.vo.EmailVO;
 import jakarta.validation.constraints.NotNull;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
 
@@ -108,5 +116,49 @@ public class Utils {
 
     public static String nullSafe(String val) {
         return val == null ? "" : val;
+    }
+
+    private static final long MAX_PDF_SIZE_MB = 15; // 15 MB limit
+
+    public static boolean isTooLarge(File file) {
+        long fileMb = file.length() / (1024 * 1024);
+        return fileMb > MAX_PDF_SIZE_MB;
+    }
+    public static boolean isEncryptedPdf(File file) {
+        try {
+            PDDocument doc = PDDocument.load(file, (String) null);
+            boolean encrypted = doc.isEncrypted();
+            doc.close();
+            return encrypted;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+    public static boolean isPdfMimeType(File file) {
+        try {
+            org.apache.tika.Tika tika = new org.apache.tika.Tika();
+            String mime = tika.detect(file);
+            return mime.equals("application/pdf");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public static boolean isPdfFile(File file) {
+        try (java.io.FileInputStream fis = new java.io.FileInputStream(file)) {
+
+            byte[] header = new byte[4];
+            if (fis.read(header) != 4) {
+                return false;
+            }
+
+            // PDF magic number check → detects real PDFs
+            return header[0] == '%' &&
+                    header[1] == 'P' &&
+                    header[2] == 'D' &&
+                    header[3] == 'F';
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

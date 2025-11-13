@@ -6,7 +6,36 @@
 
         <!-- Upload widget -->
         <div th:replace="fragments/upload-section :: upload-section"></div>
+        <!-- Score-->
+        <!-- PDF Analysis Panel -->
+        <div id="pdfAnalysisPanel" style="
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    background:#fafafa;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+">
 
+            <h3 style="margin-top:0;">🔍 PDF Analysis Result</h3>
+
+            <div>
+                <strong>Fraud Score:</strong>
+                <span id="pdfFraudScore" style="font-weight:bold;"></span>
+            </div>
+
+            <div style="margin-top:10px;">
+                <strong>Status:</strong>
+                <span id="pdfFraudStatus"></span>
+            </div>
+
+            <div style="margin-top:10px;">
+                <strong>Findings:</strong>
+                <ul id="pdfFindingsList" style="margin-left:20px;"></ul>
+            </div>
+        </div>
+        <!-- Score-->
         <hr style="margin:2rem 0;border:0;border-top:1px solid #ddd;">
 
         <!-- Manual Claim Form -->

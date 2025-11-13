@@ -1,10 +1,8 @@
 package com.sapiens.innovate.controller;
 
 import com.sapiens.innovate.entity.InnovaiteClaim;
-import com.sapiens.innovate.service.ClaimService;
-import com.sapiens.innovate.service.GPTProcessorService;
-import com.sapiens.innovate.service.InnovaiteClaimService;
-import com.sapiens.innovate.service.OcrService;
+import com.sapiens.innovate.service.*;
+import com.sapiens.innovate.util.PdfAnalysisResult;
 import com.sapiens.innovate.vo.ClaimDTO;
 import com.sapiens.innovate.vo.ClaimDataVO;
 import com.sapiens.innovate.vo.ClaimResponseVO;
@@ -30,6 +28,9 @@ public class OcrController {
     protected GPTProcessorService gptProcessor;
 
     @Autowired
+    PdfForensicsService pdfForensicsService;
+
+    @Autowired
     protected ClaimService claimService;
 
     @Autowired
@@ -43,6 +44,8 @@ public class OcrController {
             file.transferTo(convFile);
             String text = ocrService.extractTextFromFile(convFile);
             ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
+            PdfAnalysisResult result = pdfForensicsService.evaluatePdf(convFile);
+            claimDataVO.setPdfAnalysisResult(result);
             return ResponseEntity.ok(claimDataVO.toString());
         } catch (Exception e) {
             returnVal.append("Failed to create claim, with error ").append(e.getMessage()).append(". Try again after sometime!!!");

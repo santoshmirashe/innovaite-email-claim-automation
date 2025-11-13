@@ -58,7 +58,49 @@ tabAdmin.addEventListener("click", () => activateTab("admin"));
 
 // Default tab on load
 activateTab("analytics");
+//////
+function showPdfAnalysis(result) {
 
+    const panel = document.getElementById("pdfAnalysisPanel");
+    const score = document.getElementById("pdfFraudScore");
+    const status = document.getElementById("pdfFraudStatus");
+    const list = document.getElementById("pdfFindingsList");
+
+    // Make panel visible
+    panel.style.display = "block";
+
+    // Set score
+    score.textContent = result.fraudScore;
+
+    // Determine status
+    let fraudStatus = "";
+    let color = "";
+
+    if (result.fraudScore <= 5) {
+        fraudStatus = "Clean / Safe";
+        color = "green";
+    } else if (result.fraudScore <= 15) {
+        fraudStatus = "Suspicious – Review Needed";
+        color = "orange";
+    } else {
+        fraudStatus = "High Fraud Risk!";
+        color = "red";
+    }
+
+    status.textContent = fraudStatus;
+    status.style.color = color;
+    score.style.color = color;
+
+    // Populate findings
+    list.innerHTML = "";
+    result.findings.forEach(f => {
+        const li = document.createElement("li");
+        li.textContent = f;
+        list.appendChild(li);
+    });
+}
+
+///////
 
 
 //Analytics (Claim Stats)
@@ -205,7 +247,9 @@ fileInput.addEventListener("change", () => {
     if (xhr.status === 200) {
       try {
         const responseData = JSON.parse(xhr.responseText);
-
+        if (responseData.pdfAnalysisResult) {
+            showPdfAnalysis(responseData.pdfAnalysisResult);
+        }
         Object.entries(responseData).forEach(([key, value]) => {
           const field = document.getElementById(key);
           if (field) field.value = value ?? "";

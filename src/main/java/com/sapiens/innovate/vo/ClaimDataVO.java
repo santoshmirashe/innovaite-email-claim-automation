@@ -1,14 +1,13 @@
 package com.sapiens.innovate.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sapiens.innovate.util.FlexibleLocalDateTimeDeserializer;
+import com.sapiens.innovate.util.PdfAnalysisResult;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -50,6 +49,12 @@ public class ClaimDataVO {
 
     @JsonProperty("sourceEmailMessageId")
     private String sourceEmailMessageId;
+
+    // ------------------------------------------------------
+    // ADDING PDF FORENSICS RESULT INTO THE CLAIM RESPONSE
+    // ------------------------------------------------------
+    @JsonProperty("pdfAnalysisResult")
+    private PdfAnalysisResult pdfAnalysisResult;
 
     @Override
     public String toString() {

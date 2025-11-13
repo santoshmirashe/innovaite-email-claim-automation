@@ -5,10 +5,12 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.tika.Tika;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -16,6 +18,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.tika.metadata.TikaCoreProperties.RESOURCE_NAME_KEY;
 
@@ -119,5 +123,56 @@ public class OcrService {
             return "";
         }
     }
-}
 
+    public Map<String, Object> detectPdfEditing(File file) {
+        Map<String, Object> result = new HashMap<>();
+        try (PDDocument doc = PDDocument.load(file)) {
+            PDDocumentInformation info = doc.getDocumentInformation();
+            String creator = info.getCreator();
+            String producer = info.getProducer();
+            String created = info.getCreationDate() != null ? info.getCreationDate().toString() : null;
+            String modified = info.getModificationDate() != null ? info.getModificationDate().toString() : null;
+
+            boolean edited = false;
+            StringBuilder reason = new StringBuilder();
+            // 1. Modified != Created → definitely edited
+            if (created != null && modified != null && !created.equals(modified)) {
+                edited = true;
+                reason.append("Modification date differs from creation date. ");
+            }
+
+            // 2. Known suspicious PDF editors
+            if (producer != null && (
+                    producer.contains("CamScanner") ||
+                            producer.contains("ILovePDF") ||
+                            producer.contains("Smallpdf") ||
+                            producer.contains("Foxit") ||
+                            producer.contains("PDFChef") ||
+                            producer.contains("Photoshop")
+            )) {
+                edited = true;
+                reason.append("Suspicious PDF editing tool detected: ").append(producer).append(". ");
+            }
+
+            // 3. Missing or blank metadata
+            if ((creator == null || creator.isBlank()) &&
+                    (producer == null || producer.isBlank()) &&
+                    (created == null)) {
+                edited = true;
+                reason.append("PDF metadata missing/cleaned (common sign of editing). ");
+            }
+
+            result.put("edited", edited);
+            result.put("reason", edited ? reason.toString().trim() : "No editing detected.");
+            result.put("creator", creator);
+            result.put("producer", producer);
+            result.put("created", created);
+            result.put("modified", modified);
+
+        } catch (Exception e) {
+            result.put("edited", true);
+            result.put("reason", "Unable to read PDF — likely corrupted or modified.");
+        }
+        return result;
+    }
+}
