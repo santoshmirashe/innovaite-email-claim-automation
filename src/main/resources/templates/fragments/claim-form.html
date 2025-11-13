@@ -8,23 +8,12 @@
         <div th:replace="fragments/upload-section :: upload-section"></div>
         <!-- Score-->
         <!-- PDF Analysis Panel -->
-        <div id="pdfAnalysisPanel" style="
-    display:none;
-    margin-top:20px;
-    padding:15px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    background:#fafafa;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
-">
-
+        <div id="pdfAnalysisPanel">
             <h3 style="margin-top:0;">🔍 Analysis Result</h3>
-
             <div>
                 <strong>Fraud Score:</strong>
                 <span id="pdfFraudScore" style="font-weight:bold;"></span>
             </div>
-
             <div style="margin-top:10px;">
                 <strong>Status:</strong>
                 <span id="pdfFraudStatus"></span>
@@ -56,7 +45,11 @@
                 <div class="form-group"><label>Description *</label><textarea id="claimDescription" rows="3" required></textarea></div>
                 <div class="form-group"><label>Summary</label><textarea id="summary" rows="3"></textarea></div>
             </div>
-            <button class="submit-btn" type="submit">🚀 Submit Claim</button>
+            <!-- FIXED position -->
+            <div class="button-row">
+                <button class="submit-btn" type="submit">🚀 Submit Claim</button>
+                <button type="button" id="clearBtn" class="clear-btn">🧹 Clear All</button>
+            </div>
         </form>
 
         <div id="manualResult" style="margin-top:1rem;"></div>

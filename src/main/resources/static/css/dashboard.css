@@ -14,6 +14,55 @@ body {
   min-height: 100vh;
 }
 
+.button-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 20px;
+    gap: 15px !important;
+}
+
+
+.clear-btn {
+    background:#d1d5db;
+    color:#000;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.clear-btn:hover {
+    background:#c5c5c5;
+}
+
+.submit-btn {
+    background:#1e4ed8;
+    color:white;
+    padding:10px 25px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.submit-btn:hover {
+    background:#163eb5;
+}
+
+#pdfAnalysisPanel{
+    display:none;
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    background:#fafafa;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
 header {
   background: #0a1a2f;
   color: #fff;
@@ -325,10 +374,6 @@ white-space: nowrap;
 background: #1e40af;
 transform: translateY(-1px);
 }
-.submit-btn{
-margin-top: 20px;
-}
-
 
 .report-content {
 display: flex;

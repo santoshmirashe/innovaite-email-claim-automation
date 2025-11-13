@@ -100,6 +100,49 @@ function showPdfAnalysis(result) {
     });
 }
 
+document.getElementById("clearBtn").addEventListener("click", function () {
+    // 1. Clear all input fields & textareas
+    document.querySelectorAll("#claimForm input, #claimForm textarea").forEach(el => {
+        el.value = "";
+    });
+
+    // 2. Clear file selector (inside your upload-section fragment)
+    const fileInput = document.querySelector("#uploadFile"); // <-- update this ID to match your file input
+    if (fileInput) {
+        fileInput.value = ""; // resets input
+    }
+
+    // 3. Clear filename display element if you have one
+    const fileNameLabel = document.querySelector("#fileName");
+    if (fileNameLabel) {
+        fileNameLabel.textContent = "";
+    }
+
+    // 4. Hide PDF Analysis Panel
+    const panel = document.getElementById("pdfAnalysisPanel");
+    if (panel) {
+        panel.style.display = "none";
+    }
+
+    // 5. Clear panel values
+    document.getElementById("pdfFraudScore").textContent = "";
+    document.getElementById("pdfFraudStatus").textContent = "";
+    document.getElementById("pdfFindingsList").innerHTML = "";
+
+    // 6. Clear manual result block
+    const manualResult = document.getElementById("manualResult");
+    if (manualResult) {
+        manualResult.innerHTML = "";
+    }
+     // 7. Hide the result section (from your backend response)
+     const resultDiv = document.getElementById("result");
+     if (resultDiv) {
+         resultDiv.style.display = "none";
+         resultDiv.innerHTML = ""; // clear previous content
+     }
+
+    console.log("✔ All fields cleared");
+});
 ///////
 
 
