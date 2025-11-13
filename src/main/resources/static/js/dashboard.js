@@ -8,9 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabAdmin     = document.getElementById("tab-admin");
 
   if (role !== "ROLE_ADMIN") {
-    tabAnalytics?.classList.add("hidden");
-    tabHistory?.classList.add("hidden");
+    /*tabAnalytics?.classList.add("hidden");
+    tabHistory?.classList.add("hidden");*/
     tabAdmin?.classList.add("hidden");
+    tabAnalytics.style.display = "inline-block";
+    tabHistory.style.display = "inline-block";
+    tabReport.style.display = "inline-block";
   } else {
     tabAdmin.style.display = "inline-block";
   }
@@ -40,6 +43,7 @@ function activateTab(tabName) {
   } else if (tabName === "history") {
     tabHistory.classList.add("active");
     panelHistory.classList.add("active");
+    setDefaultDates?.();
     fetchClaims?.(0);
   } else {
     tabReport.classList.add("active");
