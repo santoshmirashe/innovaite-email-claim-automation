@@ -332,8 +332,12 @@ function renderTable(claims) {
       <td>${c.createdDate || '-'}</td>
       <td>${c.success ? '✅' : '❌'}</td>
       <td style="text-align:center;">
-              ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}" data-id="${c.id}">🔄</button>` : '-'}
-        </td>
+        ${
+          (!c.success /*&& Auth.isAdmin()*/)
+            ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}" data-id="${c.id}">🔄</button>`
+            : '-'
+        }
+      </td>
     </tr>
   `).join("");
 
