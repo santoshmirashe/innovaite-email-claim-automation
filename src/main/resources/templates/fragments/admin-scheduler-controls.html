@@ -11,88 +11,297 @@
         </div>
     </div>
 
+    <!-- USER MANAGEMENT PANEL -->
+    <div id="userManagement" class="user-mgmt-container" style="margin-top:2rem; display:none;">
+        <h3>👥 User Management</h3>
+
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Current Role</th>
+                <th>Change Role</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- PAGINATION -->
+        <div id="userPagination" style="margin-top: 1rem; display: flex; gap: 10px;"></div>
+    </div>
+
     <style>
-    .scheduler-container {
-      padding: 1rem;
-      background: #f9fafb;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+        .scheduler-container {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-    .scheduler-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+        .scheduler-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
 
-    .scheduler-actions button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
+        .scheduler-actions button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
 
-    .scheduler-actions button:hover {
-      background: #1e40af;
-    }
+        .scheduler-actions button:hover {
+            background: #1e40af;
+        }
 
-    .scheduler-status {
-      font-weight: 500;
-    }
-  </style>
+        .scheduler-status {
+            font-weight: 500;
+        }
+
+        .user-mgmt-container {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .user-table th, .user-table td {
+            padding: 0.6rem;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .user-table select {
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 22px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .2s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2563eb;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+    </style>
 
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!Auth.isAdmin()) return; // Only for admins
+document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.isAdmin()) return;
 
-    const adminPanel = document.getElementById("panel-admin");
-    const controls = document.getElementById("adminSchedulerControls");
+        let currentPage = 0;
+        const pageSize = 10;
 
-    function initSchedulerControls() {
-      if (!controls || controls.dataset.initialized) return;
-      controls.dataset.initialized = true;
-      controls.style.display = "block";
+        // ---------------------- USER MANAGEMENT PANEL (WITH PAGINATION) ----------------------
+        const currentUser = getCurrentUsername();
+        async function loadUsers(page = 0) {
+            try {
+                currentPage = page;
 
-      async function updateState() {
-        try {
-          const r = await Auth.fetchWithAuth('/admin/scheduler/state');
-          if (r.ok) {
-            const s = await r.json();
-            document.getElementById('schedulerState').innerText =
-              s.enabled ? '🟢 Enabled' : '🔴 Disabled';
-          }
-        } catch (e) {
-          console.error("Scheduler state fetch failed:", e);
+                const resp = await Auth.fetchWithAuth(`/admin/users?page=${page}&size=${pageSize}`);
+                if (!resp.ok) return;
+
+                const data = await resp.json();  // Page<UserDTO>
+                const users = data.content;
+                const totalPages = data.totalPages;
+
+                const tbody = document.getElementById("userTableBody");
+                tbody.innerHTML = "";
+
+                users.forEach(u => {
+                       if (u.username === currentUser) {
+                            return; // ← SKIP LOGGED-IN USER
+                        }
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>${u.role === "ROLE_ADMIN" ? "Admin" : "User"}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" class="role-toggle" data-id="${u.id}" ${u.role === "ROLE_ADMIN" ? "checked" : ""}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                `;
+
+
+                    tbody.appendChild(tr);
+                });
+
+                document.querySelectorAll(".role-toggle").forEach(tgl => {
+                  tgl.addEventListener("change", async () => {
+                    const id = tgl.dataset.id;
+                    const newRole = tgl.checked ? "ROLE_ADMIN" : "ROLE_USER";
+
+                    const resp = await Auth.fetchWithAuth('/admin/update-role', {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ id, role: newRole })
+                    });
+
+                    alert(resp.ok ? "✅ Role updated" : "❌ Update failed");
+
+                    loadUsers(currentPage);
+                  });
+                });
+
+
+                renderPagination(totalPages);
+
+            } catch (e) {
+                console.error("User load failed:", e);
+            }
         }
-      }
 
-      document.getElementById('startScheduler').addEventListener('click', async () => {
-        const resp = await Auth.fetchWithAuth('/admin/scheduler/start', { method: 'POST' });
-        alert(resp.ok ? '✅ Scheduler started' : '❌ Failed to start');
-        updateState();
-      });
+        function renderPagination(totalPages) {
+            const container = document.getElementById("userPagination");
+            container.innerHTML = "";
 
-      document.getElementById('stopScheduler').addEventListener('click', async () => {
-        const resp = await Auth.fetchWithAuth('/admin/scheduler/stop', { method: 'POST' });
-        alert(resp.ok ? '🛑 Scheduler stopped' : '❌ Failed to stop');
-        updateState();
-      });
+            if (totalPages <= 1) return;
 
-      updateState();
-    }
+            // Prev button
+            const prev = document.createElement("button");
+            prev.textContent = "⬅️ Prev";
+            prev.disabled = currentPage === 0;
+            prev.onclick = () => loadUsers(currentPage - 1);
 
-    // Observe Admin tab activation
-    const observer = new MutationObserver(() => {
-      if (adminPanel.classList.contains("active")) {
-        initSchedulerControls();
-      }
-    });
-    observer.observe(adminPanel, { attributes: true, attributeFilter: ["class"] });
-  });
-  </script>
+            // Next button
+            const next = document.createElement("button");
+            next.textContent = "Next ➡️";
+            next.disabled = currentPage === totalPages - 1;
+            next.onclick = () => loadUsers(currentPage + 1);
+
+            const info = document.createElement("span");
+            info.style.margin = "0 10px";
+            info.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+
+            container.appendChild(prev);
+            container.appendChild(info);
+            container.appendChild(next);
+        }
+
+        function getCurrentUsername() {
+                const token = Auth.getToken();
+                if (!token) return null;
+
+                const payloadBase64 = token.split('.')[1];
+                const payload = JSON.parse(atob(payloadBase64));
+                return payload.sub;  // <-- default username claim
+            }
+
+
+        // ---------------------- SCHEDULER CONTROL LOGIC ----------------------
+
+
+
+            const adminPanel = document.getElementById("panel-admin");
+            const controls = document.getElementById("adminSchedulerControls");
+
+            function initUserManagement() {
+                const panel = document.getElementById("userManagement");
+                if (!panel || panel.dataset.initialized) return;
+
+                panel.dataset.initialized = true;
+                panel.style.display = "block";
+
+                loadUsers();  // load page 0
+            }
+
+            function initSchedulerControls() {
+                if (!controls || controls.dataset.initialized) return;
+                controls.dataset.initialized = true;
+                controls.style.display = "block";
+
+                async function updateState() {
+                    try {
+                        const r = await Auth.fetchWithAuth('/admin/scheduler/state');
+                        if (r.ok) {
+                            const s = await r.json();
+                            document.getElementById('schedulerState').innerText =
+                                s.enabled ? '🟢 Enabled' : '🔴 Disabled';
+                        }
+                    } catch (e) {
+                        console.error("Scheduler state fetch failed:", e);
+                    }
+                }
+
+                document.getElementById('startScheduler').addEventListener('click', async () => {
+                    const resp = await Auth.fetchWithAuth('/admin/scheduler/start', { method: 'POST' });
+                    alert(resp.ok ? '✅ Scheduler started' : '❌ Failed to start');
+                    updateState();
+                });
+
+                document.getElementById('stopScheduler').addEventListener('click', async () => {
+                    const resp = await Auth.fetchWithAuth('/admin/scheduler/stop', { method: 'POST' });
+                    alert(resp.ok ? '🛑 Scheduler stopped' : '❌ Failed to stop');
+                    updateState();
+                });
+
+                updateState();
+            }
+
+            // Observe Admin tab activation
+            const observer = new MutationObserver(() => {
+                if (adminPanel.classList.contains("active")) {
+                    initSchedulerControls();
+                    initUserManagement();
+                }
+            });
+            observer.observe(adminPanel, { attributes: true, attributeFilter: ["class"] });
+
+        });
+
+    </script>
 
 </section>
