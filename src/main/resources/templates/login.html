@@ -35,14 +35,21 @@
 
         <form th:action="@{/login}" method="post">
             <input type="text" name="username" value="admin" placeholder="👤 Username" required />
-            <input type="password" name="password" placeholder="🔒 Password" required />
+
+            <!-- Password with toggle -->
+            <div class="password-wrapper" style="position: relative;">
+                <input id="password" type="password" name="password" placeholder="🔒 Password" required />
+                <span id="togglePassword"
+                      style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+            👁️
+        </span>
+            </div>
 
             <p class="error" th:if="${param.error}">⚠️ Invalid username or password.</p>
             <p class="error" th:if="${param.logout}">✅ You’ve been logged out successfully.</p>
 
             <button type="submit">🚀 Login</button>
 
-            <!-- Add this -->
             <div class="create-account">
                 <a th:href="@{/register-page}">Create a new account</a>
             </div>
@@ -68,6 +75,14 @@
       } catch (err) {
         alert("Invalid credentials. Please try again.");
       }
+    });
+
+    const toggle = document.getElementById('togglePassword');
+    const pwd = document.getElementById('password');
+
+    toggle.addEventListener('click', () => {
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        toggle.textContent = pwd.type === 'password' ? '👁️' : '🙈';
     });
   });
 </script>
