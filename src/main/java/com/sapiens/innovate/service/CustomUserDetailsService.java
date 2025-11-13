@@ -36,9 +36,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     // Fetch paginated users as DTOs
-    public Page<UserDTO> getUsers(int page, int size) {
+    public Page<UserDTO> getUsers(int page, int size,String userName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<InnovaiteClaimUsers> users = claimUsersRepository.findAll(pageable);
+        Page<InnovaiteClaimUsers> users = claimUsersRepository.findAllExceptUser(userName,pageable);
 
         return users.map(UserMapper::toDTO);
     }

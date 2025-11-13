@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/admin")
 public class AdminUserController {
@@ -21,8 +23,9 @@ public class AdminUserController {
     @GetMapping("/users")
     public Page<UserDTO> getUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return service.getUsers(page, size);
+            @RequestParam(defaultValue = "5") int size,
+            Principal principal) {
+        return service.getUsers(page, size,principal.getName());
     }
 
     // DTO for incoming request
