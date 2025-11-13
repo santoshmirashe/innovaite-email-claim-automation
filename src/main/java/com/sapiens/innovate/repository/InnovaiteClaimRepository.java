@@ -76,4 +76,9 @@ public interface InnovaiteClaimRepository extends JpaRepository<InnovaiteClaim, 
                                             @Param("toDate") LocalDateTime toDate,
                                             Pageable pageable);
 
+    @Query("SELECT c FROM InnovaiteClaim c " +
+            "WHERE c.senderEmail = :email OR c.phone = :phone")
+    List<InnovaiteClaim> findHistory(@Param("email") String email,
+                                     @Param("phone") String phone);
+
 }

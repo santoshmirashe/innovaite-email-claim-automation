@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -32,6 +33,8 @@ public class OcrController {
 
     @Autowired
     protected ClaimService claimService;
+    @Autowired
+    protected ClaimPatternAnalyzer claimPatternAnalyzer;
 
     @Autowired
     protected InnovaiteClaimService innovaiteClaimService;
@@ -45,6 +48,10 @@ public class OcrController {
             String text = ocrService.extractTextFromFile(convFile);
             ClaimDataVO claimDataVO = gptProcessor.analyzeMessage(text);
             AnalysisResult result = forensicsDispatcherService.analyze(convFile);
+            List<String> patternFindings = claimPatternAnalyzer.analyze(claimDataVO);
+            patternFindings.forEach(f -> {
+                result.addFinding(f, 6);
+            });
             claimDataVO.setPdfAnalysisResult(result);
             return ResponseEntity.ok(claimDataVO.toString());
         } catch (Exception e) {
