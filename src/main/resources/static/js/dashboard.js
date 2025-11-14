@@ -419,6 +419,12 @@ function renderTable(claims) {
       <td>${c.customerName || '-'}</td>
       <td>${c.claimNumber || '-'}</td>
       <td>${c.createdDate || '-'}</td>
+      <td>${c.isEmail ? '✅' : '❌'}</td>
+      <td style="text-align:center;">
+          <span class="eye-icon view-analysis-btn"
+                data-analysis='${JSON.stringify(c.analysisResult || {})}'
+                title="View Analysis">👁️</span>
+      </td>
       <td>${c.success ? '✅' : '❌'}</td>
       <td style="text-align:center;">
         ${
@@ -437,6 +443,27 @@ function renderTable(claims) {
         await retryClaim(policyNumber,id);
       });
   });
+  document.querySelectorAll(".view-analysis-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+          const raw = e.target.dataset.analysis;
+          let pretty = "";
+
+          try {
+              // If the value is a quoted JSON string → first parse as string, then parse again
+              const first = JSON.parse(raw);
+              const obj = typeof first === "string" ? JSON.parse(first) : first;
+
+              pretty = JSON.stringify(obj, null, 4);  // <-- nice indentation
+          } catch (err) {
+              pretty = raw;
+          }
+
+          document.getElementById("analysisContent").textContent = pretty;
+          document.getElementById("analysisPopup").style.display = "flex";
+      });
+  });
+
+
 }
 
 async function retryClaim(policyNumber,id) {
@@ -550,6 +577,12 @@ const claimHistorySearch = {
                     <td>${c.customerName || "-"}</td>
                     <td>${c.claimNumber || "-"}</td>
                     <td>${c.createdDate || "-"}</td>
+                    <td>${c.isEmail ? '✅' : '❌'}</td>
+                     <td style="text-align:center;">
+                        <span class="eye-icon view-analysis-btn"
+                              data-analysis='${JSON.stringify(c.analysisResult || {})}'
+                              title="View Analysis">👁️</span>
+                     </td>
                     <td>${c.success ? "✅" : "❌"}</td>
                     <td style="text-align:center;">
                                   ${!c.success ? `<button class="retry-btn" title="Retry Claim" data-policy-number="${c.policyNumber}" data-id="${c.id}">🔄</button>` : '-'}
@@ -564,6 +597,27 @@ const claimHistorySearch = {
                     await retryClaim(policyNumber,id);
                   });
               });
+
+              document.querySelectorAll(".view-analysis-btn").forEach(btn => {
+                  btn.addEventListener("click", (e) => {
+                      const raw = e.target.dataset.analysis;
+                      let pretty = "";
+
+                      try {
+                          // If the value is a quoted JSON string → first parse as string, then parse again
+                          const first = JSON.parse(raw);
+                          const obj = typeof first === "string" ? JSON.parse(first) : first;
+
+                          pretty = JSON.stringify(obj, null, 4);  // <-- nice indentation
+                      } catch (err) {
+                          pretty = raw;
+                      }
+
+                      document.getElementById("analysisContent").textContent = pretty;
+                      document.getElementById("analysisPopup").style.display = "flex";
+                  });
+              });
+
         },
 
         handleSearchInput() {
@@ -608,4 +662,8 @@ const claimHistorySearch = {
     };
 
     claimHistorySearch.init();
+document.getElementById("closeAnalysisPopup").addEventListener("click", () => {
+    document.getElementById("analysisPopup").style.display = "none";
+});
+
 });

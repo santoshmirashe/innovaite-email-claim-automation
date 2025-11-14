@@ -16,6 +16,8 @@
                 <th>Customer Name</th>
                 <th>Claim Number</th>
                 <th>Created Date</th>
+                <th>Email Pull</th>
+                <th>Analysis</th>
                 <th>Success</th>
                 <th>Retry</th>
             </tr>
@@ -29,6 +31,13 @@
             <button id="prevPage" disabled>⬅ Prev</button>
             <span id="pageInfo">Showing 1–5 of 0 results</span>
             <button id="nextPage">Next ➡</button>
+        </div>
+    </div>
+
+    <div id="analysisPopup" class="popup-bg" style="display:none;">
+        <div class="popup-box">
+            <pre id="analysisContent"></pre>
+            <button id="closeAnalysisPopup">Close</button>
         </div>
     </div>
 </div>

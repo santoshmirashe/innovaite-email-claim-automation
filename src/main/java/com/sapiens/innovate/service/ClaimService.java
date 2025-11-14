@@ -218,7 +218,9 @@ public class ClaimService {
                         c.getClaimNumber(),
                         c.getCreatedDate(),
                         c.getSuccess(),
-                        c.getId()
+                        c.getId(),
+                        c.getFraudAnalysis(),
+                        c.getIsEmail()
                 ))
                 .toList();
 
@@ -309,7 +311,9 @@ public class ClaimService {
                 claim.getClaimNumber(),
                 claim.getCreatedDate(),
                 claim.getSuccess(),
-                claim.getId()
+                claim.getId(),
+                claim.getFraudAnalysis(),
+                claim.getIsEmail()
         );
     }
 

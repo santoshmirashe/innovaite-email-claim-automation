@@ -1,5 +1,7 @@
 package com.sapiens.innovate.vo;
 
+import com.sapiens.innovate.util.AnalysisResult;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,16 +14,22 @@ public class ClaimDTO {
 
     private Long id;
 
+    private String analysisResult;
+
+    private Boolean isEmail;
+
     public ClaimDTO() {}
 
     public ClaimDTO(String policyNumber, String customerName, String claimNumber,
-                    LocalDateTime createdDate, boolean success, Long id) {
+                    LocalDateTime createdDate, boolean success, Long id,String analysisResult,Boolean isEmail) {
         this.policyNumber = policyNumber;
         this.customerName = customerName;
         this.claimNumber = claimNumber;
         this.createdDate = createdDate;
         this.success = success;
         this.id = id;
+        this.analysisResult=analysisResult;
+        this.isEmail = isEmail;
     }
 
     // Getters and Setters
@@ -71,6 +79,22 @@ public class ClaimDTO {
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public String getAnalysisResult() {
+        return analysisResult;
+    }
+
+    public void setAnalysisResult(String analysisResult) {
+        this.analysisResult = analysisResult;
+    }
+
+    public Boolean getEmail() {
+        return isEmail;
+    }
+
+    public void setEmail(Boolean email) {
+        isEmail = email;
     }
 
     @Override
