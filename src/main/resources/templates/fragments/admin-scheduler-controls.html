@@ -201,7 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
                       body: JSON.stringify({ id, role: newRole })
                     });
 
-                    alert(resp.ok ? "✅ Role updated" : "❌ Update failed");
+                    showToast(resp.ok ? "✅ Role updated" : "❌ Update failed",resp.ok ? "success" : "error");
+
 
                     loadUsers(currentPage);
                   });
@@ -300,13 +301,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('startScheduler').addEventListener('click', async () => {
                     const resp = await Auth.fetchWithAuth('/admin/scheduler/start', { method: 'POST' });
-                    alert(resp.ok ? '✅ Scheduler started' : '❌ Failed to start');
+                    showToast(resp.ok ? "🟢 Scheduler started" : "❌ Failed to start",resp.ok ? "success" : "error");
+
                     updateState();
                 });
 
                 document.getElementById('stopScheduler').addEventListener('click', async () => {
                     const resp = await Auth.fetchWithAuth('/admin/scheduler/stop', { method: 'POST' });
-                    alert(resp.ok ? '🛑 Scheduler stopped' : '❌ Failed to stop');
+                   showToast(resp.ok ? "🛑 Scheduler stopped" : "❌ Failed to stop",resp.ok ? "success" : "error");
+
                     updateState();
                 });
 

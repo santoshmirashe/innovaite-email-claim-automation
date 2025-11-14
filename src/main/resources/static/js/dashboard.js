@@ -467,7 +467,7 @@ function renderTable(claims) {
 }
 
 async function retryClaim(policyNumber,id) {
-  if (!confirm(`Reprocess claim by ${policyNumber}?`)) return;
+  if (!(await showConfirm(`Reprocess claim by ${policyNumber}?`))) return;
 
   document.getElementById("mask").style.display = "flex"; // show loader
 
@@ -480,13 +480,13 @@ async function retryClaim(policyNumber,id) {
 
     const updatedClaim = await res.json();
 
-    alert(`✅ Claim reprocessed successfully.\nNew Claim Number: ${updatedClaim.claimNumber}`);
+    showToast("✅ Claim reprocessed successfully.\nNew Claim Number: ${updatedClaim.claimNumber}","success");
 
     // Refresh the table to reflect updated status
     fetchClaims(currentPage);
   } catch (err) {
     console.error(err);
-    alert("⚠️ Failed to reprocess claim. Check server logs.");
+    showToast("⚠️ Failed to reprocess claim. Check server logs.","error");
   } finally {
     document.getElementById("mask").style.display = "none"; // hide loader
   }
@@ -679,3 +679,43 @@ function formatDate(isoString) {
 
 
 });
+function showToast(message, type = "info") {
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => toast.classList.add("show"), 50);
+
+    // Auto remove after 3 sec
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 250);
+    }, 3000);
+}
+
+function showConfirm(message) {
+    return new Promise(resolve => {
+        const modal = document.getElementById("confirm-modal");
+        const text = document.getElementById("confirm-text");
+        const yesBtn = document.getElementById("confirm-yes");
+        const noBtn = document.getElementById("confirm-no");
+
+        text.textContent = message;
+        modal.classList.remove("hidden");
+
+        const cleanup = (result) => {
+            modal.classList.add("hidden");
+            yesBtn.onclick = null;
+            noBtn.onclick = null;
+            resolve(result);
+        };
+
+        yesBtn.onclick = () => cleanup(true);
+        noBtn.onclick = () => cleanup(false);
+    });
+}
