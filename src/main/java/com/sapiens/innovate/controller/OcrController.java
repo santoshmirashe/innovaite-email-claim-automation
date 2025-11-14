@@ -52,7 +52,7 @@ public class OcrController {
             patternFindings.forEach(f -> {
                 result.addFinding(f, 6);
             });
-            claimDataVO.setPdfAnalysisResult(result);
+            claimDataVO.setAnalysisResult(result);
             return ResponseEntity.ok(claimDataVO.toString());
         } catch (Exception e) {
             returnVal.append("Failed to create claim, with error ").append(e.getMessage()).append(". Try again after sometime!!!");

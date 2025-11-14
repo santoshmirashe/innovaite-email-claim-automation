@@ -49,6 +49,7 @@ public class InnovaiteClaimService {
         InnovaiteClaim innovaiteClaim = new InnovaiteClaim();
         innovaiteClaim.setEmailContent(content);
         innovaiteClaim.setSuccess(false);
+        innovaiteClaim.setFraudAnalysis(claimDataVO.getAnalysisResult().toString());;
         innovaiteClaim.setStatus("PENDING");
         innovaiteClaim.setProcessed("PENDING");
         innovaiteClaim.setEventDate(claimDataVO.getIncidentDate());

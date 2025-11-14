@@ -75,4 +75,7 @@ public class InnovaiteClaim {
 
     @Column(name = "EVENT_DESC")
     private String eventDesc;
+
+    @Column(name = "FRAUD_ANALYSIS", columnDefinition = "NVARCHAR(MAX)")
+    private String fraudAnalysis;
 }

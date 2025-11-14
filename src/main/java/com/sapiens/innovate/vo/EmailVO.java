@@ -23,8 +23,10 @@ public class EmailVO {
     List<EmailAttachment> attachments;
 
     public void setCcMailRecipients(Address[] allRecipients) {
-        for (Address address : allRecipients){
-            this.getCcMailAddress().add(((InternetAddress)address).getAddress());
+        if(null != allRecipients) {
+            for (Address address : allRecipients) {
+                this.getCcMailAddress().add(((InternetAddress) address).getAddress());
+            }
         }
     }
 

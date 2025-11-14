@@ -21,4 +21,13 @@ public class AnalysisResult {
         fraudScore += score;
         findings.add(msg);
     }
+    @Override
+    public String toString() {
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper()
+                    .writeValueAsString(this);
+        } catch (Exception e) {
+            return "{\"error\":\"failed to convert AnalysisResult to JSON\"}";
+        }
+    }
 }

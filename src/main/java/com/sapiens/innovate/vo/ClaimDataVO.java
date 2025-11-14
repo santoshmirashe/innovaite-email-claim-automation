@@ -54,7 +54,7 @@ public class ClaimDataVO {
     // ADDING PDF FORENSICS RESULT INTO THE CLAIM RESPONSE
     // ------------------------------------------------------
     @JsonProperty("analysisResult")
-    private AnalysisResult pdfAnalysisResult;
+    private AnalysisResult analysisResult;
 
     @Override
     public String toString() {

@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const role = Auth.getRole();
   const username = Auth.getUsername();
+  let lastPdfAnalysis = null;
 
   const tabAnalytics = document.getElementById("tab-analytics");
   const tabHistory   = document.getElementById("tab-history");
@@ -60,7 +61,7 @@ tabAdmin.addEventListener("click", () => activateTab("admin"));
 activateTab("analytics");
 //////
 function showPdfAnalysis(result) {
-
+    lastPdfAnalysis = result;
     const panel = document.getElementById("pdfAnalysisPanel");
     const score = document.getElementById("pdfFraudScore");
     const status = document.getElementById("pdfFraudStatus");
@@ -349,7 +350,8 @@ document.getElementById('claimForm').addEventListener('submit', async (e) => {
       : null,
     claimAmount: claimAmount.value ? parseFloat(claimAmount.value) : null,
     claimDescription: claimDescription.value,
-    summary: summary.value
+    summary: summary.value,
+    analysisResult: lastPdfAnalysis
   };
 
   try {
