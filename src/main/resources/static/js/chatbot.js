@@ -439,14 +439,14 @@ function toggleChat() { isOpen ? closeChat() : openChat(); }
 /***** EVENT HANDLERS *****/
 fab.addEventListener('click', () => {
     toggleChat();
-    if (firstOpen && isOpen) {
-        firstOpen = false;
-        try { localStorage.setItem(FIRSTOPEN_KEY, 'true'); } catch(e) {}
-        const g = addMessageToState("👋 Hi, I'm Elon! How can I help you today?", 'bot', { status: 'sent' });
-        setTimeout(() => { if (isOpen) markMessageDelivered(g.id); }, 120);
-        setTimeout(() => { if (isOpen) markMessageSeen(g.id); }, 420);
-        inputEl.focus();
-    } else if (isOpen) {
+    if (isOpen) {
+        // Only show greeting when chat history is EMPTY
+        if (messages.length === 0) {
+            const g = addMessageToState("👋 Hi, I'm Elon! How can I help you today?", "bot", { status: "sent" });
+            setTimeout(() => markMessageDelivered(g.id), 120);
+            setTimeout(() => markMessageSeen(g.id), 420);
+        }
+
         inputEl.focus();
     }
 });
@@ -460,10 +460,11 @@ darkToggle.addEventListener('click', () => {
     saveTheme();
 });
 
-clearChatBtn.addEventListener('click', () => {
-    if (!confirm('Clear chat history?')) return;
+clearChatBtn.addEventListener('click', async () => {
+    if (!(await showConfirm("Clear chat history?"))) return;
     clearChatHistory();
 });
+
 
 // ESC to close
 document.addEventListener('keydown', (e) => {
