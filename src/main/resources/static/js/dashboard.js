@@ -418,7 +418,7 @@ function renderTable(claims) {
       <td>${c.policyNumber || '-'}</td>
       <td>${c.customerName || '-'}</td>
       <td>${c.claimNumber || '-'}</td>
-      <td>${c.createdDate || '-'}</td>
+      <td>${formatDate(c.createdDate)}</td>
       <td>${c.email ? 'Email' : 'Manual'}</td>
       <td style="text-align:center;">
           <span class="eye-icon view-analysis-btn"
@@ -576,7 +576,7 @@ const claimHistorySearch = {
                     <td>${c.policyNumber || "-"}</td>
                     <td>${c.customerName || "-"}</td>
                     <td>${c.claimNumber || "-"}</td>
-                    <td>${c.createdDate || "-"}</td>
+                    <td>${formatDate(c.createdDate)}</td>
                     <td>${c.email ? 'Email' : 'Manual'}</td>
                      <td style="text-align:center;">
                         <span class="eye-icon view-analysis-btn"
@@ -665,5 +665,17 @@ const claimHistorySearch = {
 document.getElementById("closeAnalysisPopup").addEventListener("click", () => {
     document.getElementById("analysisPopup").style.display = "none";
 });
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
 
 });

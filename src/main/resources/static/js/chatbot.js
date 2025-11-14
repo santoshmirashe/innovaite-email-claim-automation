@@ -235,6 +235,29 @@ function detectUserId() {
     return anon;
 }
 
+function enforceDailyReset() {
+    const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+
+    const LAST_USED_KEY = `elonChatLastDate::${USER_ID}`;
+    const lastDate = localStorage.getItem(LAST_USED_KEY);
+
+    if (lastDate !== today) {
+        // date changed → wipe everything for this user
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(LASTSEEN_KEY);
+            localStorage.removeItem(FIRSTOPEN_KEY);
+        } catch(e) {}
+
+        messages = [];
+        renderMessages();
+    }
+
+    // store today for next check
+    localStorage.setItem(LAST_USED_KEY, today);
+}
+
+
 
 function computeKeysForUser() {
     USER_ID = detectUserId();
@@ -629,6 +652,7 @@ function markMessageSeen(id) {
 /***** INIT *****/
 // compute user-specific keys and load per-user state
 computeKeysForUser();
+enforceDailyReset();
 
 // restore theme and history
 applyTheme();

@@ -555,3 +555,45 @@ pre { max-height: 350px; overflow: auto; background: #f8f8f8; padding: 10px; }
 .eye-icon:hover {
     color: #000;
 }
+td {
+  padding: 8px 12px;
+}
+tr:nth-child(even) {
+  background: #f8f9fa;
+}
+.retry-icon:hover {
+  transform: scale(1.1);
+}
+.table-row {
+    padding: 8px 12px !important;
+}
+td, th {
+    text-align: center;
+    vertical-align: middle;
+}
+td:first-child, th:first-child {
+    text-align: left;
+}
+td img {
+    width: 16px;
+    height: 16px;
+}
+td img:hover {
+    transform: scale(1.15);
+    cursor: pointer;
+}
+thead {
+    background: #eef2f7;
+}
+thead th {
+    border-bottom: 2px solid #d0d6dd;
+}
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+td.claim-number {
+    white-space: nowrap;
+    width: 160px;
+}
+
