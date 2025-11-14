@@ -1,6 +1,3 @@
-// Complete Chatbot JS — Original UI + Option-B typing + ticks/seen/online + persistent history
-// Paste this whole file into your project (replace previous chatbot script).
-
 (function () {
 
 /***** CONFIG *****/
@@ -17,11 +14,13 @@ let unreadCount = 0;
 let typingInterval = null;
 let cancelTyping = false;
 let isDark = localStorage.getItem('elonChatDark') === 'true';
-let lastSeenAt = localStorage.getItem('elonChatLastSeen') || null;
 
-// message list will be an array of objects persisted to localStorage
-// { id, sender: 'user'|'bot', text, timeSent, status: 'sent'|'delivered'|'seen', seenAt }
-let messages = [];
+// ---- per-user keys (computed at init) ----
+let USER_ID = null;
+let STORAGE_KEY = null;
+let LASTSEEN_KEY = null;
+let FIRSTOPEN_KEY = null;
+let messages = []; // per-user message list
 let observer = null;
 
 /***** INJECT HTML + CSS *****/
@@ -213,15 +212,48 @@ function applyTheme() {
     else document.documentElement.classList.remove('elon-dark');
     darkToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
 }
-applyTheme();
 
+/***** PER-USER STORAGE HELPERS *****/
+// Try to detect an application user id to scope localStorage per user.
+// Checks common locations, then falls back to 'anon'.
+function detectUserId() {
+    try {
+        if (Auth && typeof Auth.getUsername === "function") {
+            const u = Auth.getUsername();
+            if (u && typeof u === "string") {
+                return u.trim();
+            }
+        }
+    } catch (e) {}
+
+    // Fallback for anonymous visitors
+    let anon = localStorage.getItem('elonChatAnonId');
+    if (!anon) {
+        anon = 'anon_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+        try { localStorage.setItem('elonChatAnonId', anon); } catch (e) {}
+    }
+    return anon;
+}
+
+
+function computeKeysForUser() {
+    USER_ID = detectUserId();
+    // sanitize: replace spaces and special characters
+    USER_ID = String(USER_ID).replace(/[^A-Za-z0-9_\-:.]/g, '_').slice(0, 64);
+    STORAGE_KEY = 'elonChatHistoryV2::' + USER_ID;
+    LASTSEEN_KEY = 'elonChatLastSeen::' + USER_ID;
+    FIRSTOPEN_KEY = 'elonChatFirstOpen::' + USER_ID;
+}
+
+/***** PERSISTENCE (per user) *****/
 function persistMessages() {
-    try { localStorage.setItem('elonChatHistoryV2', JSON.stringify(messages)); } catch (e) { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch (e) { /* ignore */ }
 }
 function loadMessages() {
     try {
-        const raw = localStorage.getItem('elonChatHistoryV2');
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) messages = JSON.parse(raw) || [];
+        else messages = [];
     } catch (e) { messages = []; }
 }
 function clearChatHistory() {
@@ -232,6 +264,15 @@ function clearChatHistory() {
     updateTitle();
 }
 
+function loadLastSeen() {
+    const raw = localStorage.getItem(LASTSEEN_KEY);
+    return raw ? Number(raw) : null;
+}
+function saveLastSeen(ts) {
+    try { localStorage.setItem(LASTSEEN_KEY, String(ts)); } catch (e) {}
+}
+
+/***** TIME/FORMAT HELPERS *****/
 function formatTime(ts) {
     if (!ts) return '';
     const d = new Date(ts);
@@ -247,6 +288,7 @@ function updateTitle(text) {
             nameEl.innerHTML = 'Elon (Online)';
             onlineDot.classList.remove('offline'); onlineDot.classList.add('online');
         } else {
+            const lastSeenAt = loadLastSeen();
             const last = lastSeenAt ? formatTime(lastSeenAt) : 'away';
             nameEl.innerHTML = `Elon (Last seen ${last})`;
             onlineDot.classList.remove('online'); onlineDot.classList.add('offline');
@@ -364,8 +406,8 @@ function closeChat() {
     box.setAttribute('aria-hidden','true');
     isOpen = false;
     clearTimeout(inactivityTimer);
-    lastSeenAt = Date.now();
-    localStorage.setItem('elonChatLastSeen', lastSeenAt);
+    const now = Date.now();
+    saveLastSeen(now);
     updateTitle();
 }
 
@@ -376,6 +418,7 @@ fab.addEventListener('click', () => {
     toggleChat();
     if (firstOpen && isOpen) {
         firstOpen = false;
+        try { localStorage.setItem(FIRSTOPEN_KEY, 'true'); } catch(e) {}
         const g = addMessageToState("👋 Hi, I'm Elon! How can I help you today?", 'bot', { status: 'sent' });
         setTimeout(() => { if (isOpen) markMessageDelivered(g.id); }, 120);
         setTimeout(() => { if (isOpen) markMessageSeen(g.id); }, 420);
@@ -577,18 +620,30 @@ function markMessageSeen(id) {
     if (msg.status === 'seen') return;
     // mark as seen
     updateMessageStatus(id, 'seen', Date.now());
+    // update lastSeen for this user
+    saveLastSeen(Date.now());
     // optional: send seen event to backend (uncomment and implement endpoint)
-    // fetch('/api/chat/seen', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id }) }).catch(()=>{});
+    // fetch('/api/chat/seen', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id, userId: USER_ID }) }).catch(()=>{});
 }
 
 /***** INIT *****/
+// compute user-specific keys and load per-user state
+computeKeysForUser();
+
 // restore theme and history
 applyTheme();
 loadMessages();
-renderMessages();
+
+// set firstOpen based on per-user flag
+try {
+    firstOpen = !(localStorage.getItem(FIRSTOPEN_KEY) === 'true');
+} catch (e) { firstOpen = true; }
 
 // initial title update
 updateTitle();
+
+// render loaded messages
+renderMessages();
 
 // Expose lightweight API
 window.ElonChat = {
@@ -596,7 +651,18 @@ window.ElonChat = {
     close: closeChat,
     toggle: toggleChat,
     clearHistory: clearChatHistory,
-    setDark: (v) => { isDark = !!v; applyTheme(); saveTheme(); }
+    setDark: (v) => { isDark = !!v; applyTheme(); saveTheme(); },
+    getUserId: () => USER_ID,
+    // debug helper: reset all data for current user
+    _resetUserStorage: () => {
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(LASTSEEN_KEY);
+            localStorage.removeItem(FIRSTOPEN_KEY);
+            messages = [];
+            renderMessages();
+        } catch (e) {}
+    }
 };
 
 })();
