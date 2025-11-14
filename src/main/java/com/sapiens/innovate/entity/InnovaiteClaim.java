@@ -80,5 +80,5 @@ public class InnovaiteClaim {
     private String fraudAnalysis;
 
     @Column(name = "IS_EMAIL")
-    private Boolean isEmail = false;
+    private Boolean isEmail;
 }

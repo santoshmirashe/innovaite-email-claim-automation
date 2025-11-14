@@ -67,6 +67,7 @@ public class SecurityConfig {
                         "/api/**",
                         "/register-page",
                         "/register",
+                        "/favicon.ico",
                         "/auth/register").permitAll()
 // static resources or swagger if any
                 .requestMatchers("/public/**").permitAll()

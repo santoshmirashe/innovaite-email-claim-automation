@@ -419,7 +419,7 @@ function renderTable(claims) {
       <td>${c.customerName || '-'}</td>
       <td>${c.claimNumber || '-'}</td>
       <td>${c.createdDate || '-'}</td>
-      <td>${c.isEmail ? '✅' : '❌'}</td>
+      <td>${c.email ? 'Email' : 'Manual'}</td>
       <td style="text-align:center;">
           <span class="eye-icon view-analysis-btn"
                 data-analysis='${JSON.stringify(c.analysisResult || {})}'
@@ -577,7 +577,7 @@ const claimHistorySearch = {
                     <td>${c.customerName || "-"}</td>
                     <td>${c.claimNumber || "-"}</td>
                     <td>${c.createdDate || "-"}</td>
-                    <td>${c.isEmail ? '✅' : '❌'}</td>
+                    <td>${c.email ? 'Email' : 'Manual'}</td>
                      <td style="text-align:center;">
                         <span class="eye-icon view-analysis-btn"
                               data-analysis='${JSON.stringify(c.analysisResult || {})}'
