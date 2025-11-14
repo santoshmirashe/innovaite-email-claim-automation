@@ -2,6 +2,8 @@ package com.sapiens.innovate.service;
 
 import com.sapiens.innovate.entity.InnovaiteClaim;
 import com.sapiens.innovate.repository.InnovaiteClaimRepository;
+import com.sapiens.innovate.util.AnalysisResult;
+import com.sapiens.innovate.util.FileTypeUtil;
 import com.sapiens.innovate.util.Utils;
 import com.sapiens.innovate.vo.*;
 import jakarta.mail.MessagingException;
@@ -15,11 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +44,12 @@ public class ClaimService {
     protected EmailService emailService;
 
     @Autowired
+    protected ClaimPatternAnalyzer claimPatternAnalyzer;
+    @Autowired
     private OcrService attachmentExtractorService;
+
+    @Autowired
+    ForensicsDispatcherService forensicsDispatcherService;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -95,6 +104,7 @@ public class ClaimService {
     private void processSingleEmail(EmailVO email) throws Exception {
         InnovaiteClaim claim = new InnovaiteClaim();
         ClaimDataVO claimData = null;
+        claim.setIsEmail(true);
         claim.setEmailContent(email.getMailBody());
         claim.setSenderEmail(email.getSenderEmailAddress());
         claim.setSuccess(false);
@@ -104,7 +114,9 @@ public class ClaimService {
         claim.setUpdateDate(LocalDateTime.now());
         try {
             //Step-0: Extract data from email
-            String combinedText = buildCombinedEmailContent(email);
+            Map<String,Object> content = buildCombinedEmailContent(email);
+            String combinedText = (String) content.getOrDefault("COMBINED_STRING","");
+            AnalysisResult analysisResult = (AnalysisResult) content.getOrDefault("ANALYSIS_RESULT",new AnalysisResult());
             // Step 1: Extract claim details using GPT
             claimData = gptProcessor.analyzeMessage(combinedText);
 
@@ -120,6 +132,11 @@ public class ClaimService {
             // Step 2: Raise the claim
             //log.info("Raising claim for policy: {}", claimData.getPolicyNumber());
             claim.setRequest(claimData.toString());
+            List<String> patternFindings = claimPatternAnalyzer.analyze(claimData);
+            patternFindings.forEach(f -> {
+                analysisResult.addFinding(f, 6);
+            });
+            claim.setFraudAnalysis(analysisResult.toString());
             ClaimResponseVO claimResponse = raiseClaim(claimData);
 
             if (claimResponse == null || claimResponse.getClaimNumber() == null) {
@@ -214,7 +231,8 @@ public class ClaimService {
     }
 
 
-    public String buildCombinedEmailContent(EmailVO email) {
+    public Map<String,Object> buildCombinedEmailContent(EmailVO email) {
+        Map<String,Object> returnVal = new HashMap<>();
         StringBuilder combined = new StringBuilder();
 
         // Add subject and body
@@ -227,23 +245,27 @@ public class ClaimService {
             for (EmailVO.EmailAttachment att : email.getAttachments()) {
                 combined.append("--- Attachment ").append(index++).append(": ")
                         .append(att.getFilename()).append(" ---\n");
-
                 try {
-                    String extractedText = attachmentExtractorService.extractTextFromByteStream(
-                            att.getContent(), att.getFilename());
-                    if (extractedText == null || extractedText.isBlank()) {
-                        combined.append("[No readable text extracted]\n\n");
-                    } else {
-                        combined.append(extractedText.trim()).append("\n\n");
+                    File attachmentFile = FileTypeUtil.getFileFromStream(att.getContent(), att.getFilename());
+                    if (null != attachmentFile) {
+                        AnalysisResult result = forensicsDispatcherService.analyze(attachmentFile);
+                        returnVal.put("ANALYSIS_RESULT",result);
+                        String extractedText = attachmentExtractorService.extractTextFromFile(attachmentFile);
+                        if (extractedText == null || extractedText.isBlank()) {
+                            combined.append("[No readable text extracted]\n\n");
+                        } else {
+                            combined.append(extractedText.trim()).append("\n\n");
+                        }
                     }
-                } catch (Exception e) {
-                    combined.append("[Error extracting text from attachment: ")
-                            .append(e.getMessage()).append("]\n\n");
-                }
+                    } catch(Exception e){
+                        combined.append("[Error extracting text from attachment: ")
+                                .append(e.getMessage()).append("]\n\n");
+                    }
             }
         }
+        returnVal.put("COMBINED_STRING",combined.toString());
 
-        return combined.toString();
+        return returnVal;
     }
 
 

@@ -78,4 +78,7 @@ public class InnovaiteClaim {
 
     @Column(name = "FRAUD_ANALYSIS", columnDefinition = "NVARCHAR(MAX)")
     private String fraudAnalysis;
+
+    @Column(name = "IS_EMAIL")
+    private Boolean isEmail = false;
 }

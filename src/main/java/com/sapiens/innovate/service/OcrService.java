@@ -3,22 +3,12 @@ package com.sapiens.innovate.service;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.tika.Tika;
-import org.apache.tika.metadata.Metadata;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.apache.tika.metadata.TikaCoreProperties.RESOURCE_NAME_KEY;
 
 @Service
 @Slf4j
@@ -48,20 +38,6 @@ public class OcrService {
         } else {
             throw new IllegalArgumentException("Unsupported file type: " + fileName);
         }
-    }
-
-    public String extractTextFromByteStream(byte[] content, String filename) throws Exception {
-        String returnVal = "";
-        try {
-            File convFile = new File(System.getProperty("java.io.tmpdir") + filename);
-            try (FileOutputStream fos = new FileOutputStream(convFile)) {
-                fos.write(content);
-            }
-            returnVal = this.extractTextFromFile(convFile);
-        }catch(Exception e){
-            returnVal = "";
-        }
-        return returnVal;
     }
 
     private String extractWithTika(File file) throws Exception {

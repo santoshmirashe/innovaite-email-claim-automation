@@ -3,6 +3,7 @@ package com.sapiens.innovate.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class FileTypeUtil {
 
@@ -50,6 +51,18 @@ public class FileTypeUtil {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static File getFileFromStream(byte[] content, String filename){
+        File convFile = new File(System.getProperty("java.io.tmpdir") + filename);
+        try {
+            try (FileOutputStream fos = new FileOutputStream(convFile)) {
+                fos.write(content);
+            }
+        }catch(Exception e){
+           return null;
+        }
+        return convFile;
     }
 }
 
