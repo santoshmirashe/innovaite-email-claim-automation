@@ -5,6 +5,7 @@ import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -28,6 +29,13 @@ public class EmailVO {
                 this.getCcMailAddress().add(((InternetAddress) address).getAddress());
             }
         }
+    }
+
+    public List<String> getCcMailAddress() {
+        if (ccMailAddress == null) {
+            ccMailAddress = new ArrayList<>();
+        }
+        return ccMailAddress;
     }
 
 

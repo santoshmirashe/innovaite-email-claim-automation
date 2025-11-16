@@ -29,7 +29,7 @@ public class GPTProcessorService {
     @Value("${azure.ai.deployment}")
     private String deploymentName;
 
-    @Value("${azure.ai.temperature:0.0}")
+    @Value("${azure.ai.temperature:2.0}")
     private Double temperature;
 
     @Value("${azure.ai.max-tokens:1500}")
@@ -66,6 +66,10 @@ public class GPTProcessorService {
                 new ChatRequestAssistantMessage(getFewShotResponse2()),
                 new ChatRequestUserMessage(getFewShotExample3()),
                 new ChatRequestAssistantMessage(getFewShotResponse3()),
+                new ChatRequestUserMessage(getFewShotExample4()),
+                new ChatRequestAssistantMessage(getFewShotResponse4()),
+                new ChatRequestUserMessage(getFewShotExample4_ConflictingPolicy()),
+                new ChatRequestAssistantMessage(getFewShotResponse4_ConflictingPolicy()),
                 new ChatRequestUserMessage(prompt)
         );
 
@@ -83,7 +87,7 @@ public class GPTProcessorService {
             throw new RuntimeException("AI response was empty or invalid");
         }
 
-        log.debug("AI Response: {}", content);
+        log.info("AI Response: {}", content);
 
         // Clean response
         content = cleanJsonResponse(content);

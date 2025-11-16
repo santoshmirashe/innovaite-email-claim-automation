@@ -59,11 +59,10 @@ public class ClaimService {
                 "policyNumber", claimData.getPolicyNumber(),
                 "contactName", claimData.getContactName(),
                 "fromEmail", claimData.getFromEmail(),
-                "contactPhone", claimData.getContactPhone(),
+                "contactPhone", claimData.getContactPhone()==null ? "999999999" : claimData.getContactPhone(),
                 "claimDescription", claimData.getClaimDescription(),
                 "claimAmount", claimData.getClaimAmount(),
-                "incidentDate", claimData.getIncidentDate().toLocalDate().toString(),
-                "summary", claimData.getSummary()
+                "incidentDate", claimData.getIncidentDate().toLocalDate().toString()
         );
         ResponseEntity<ClaimResponseVO> response =
                 restTemplate.postForEntity(url, payload, ClaimResponseVO.class);
@@ -235,17 +234,18 @@ public class ClaimService {
 
     public Map<String,Object> buildCombinedEmailContent(EmailVO email) {
         Map<String,Object> returnVal = new HashMap<>();
-        StringBuilder combined = new StringBuilder();
+        StringBuilder combinedText = new StringBuilder();
 
         // Add subject and body
-        combined.append("Subject: ").append(Utils.nullSafe(email.getMailSubject())).append("\n\n");
-        combined.append("Body:\n").append(Utils.nullSafe(email.getMailBody())).append("\n\n");
+        combinedText.append("=== EMAIL CONTENT ===\n");
+        combinedText.append("Subject: ").append(Utils.nullSafe(email.getMailSubject())).append("\n\n");
+        combinedText.append("Body:\n").append(Utils.nullSafe(email.getMailBody())).append("\n\n");
 
         //Add attachment text (if any)
         if (email.getAttachments() != null && !email.getAttachments().isEmpty()) {
             int index = 1;
             for (EmailVO.EmailAttachment att : email.getAttachments()) {
-                combined.append("--- Attachment ").append(index++).append(": ")
+                combinedText.append("\n\n=== ATTACHMENT ").append(index++).append(" - ")
                         .append(att.getFilename()).append(" ---\n");
                 try {
                     File attachmentFile = FileTypeUtil.getFileFromStream(att.getContent(), att.getFilename());
@@ -254,18 +254,18 @@ public class ClaimService {
                         returnVal.put("ANALYSIS_RESULT",result);
                         String extractedText = attachmentExtractorService.extractTextFromFile(attachmentFile);
                         if (extractedText == null || extractedText.isBlank()) {
-                            combined.append("[No readable text extracted]\n\n");
+                            combinedText.append("[No readable text extracted]\n\n");
                         } else {
-                            combined.append(extractedText.trim()).append("\n\n");
+                            combinedText.append(extractedText.trim()).append("\n\n");
                         }
                     }
                     } catch(Exception e){
-                        combined.append("[Error extracting text from attachment: ")
+                    combinedText.append("[Error extracting text from attachment: ")
                                 .append(e.getMessage()).append("]\n\n");
                     }
             }
         }
-        returnVal.put("COMBINED_STRING",combined.toString());
+        returnVal.put("COMBINED_STRING",combinedText.toString());
 
         return returnVal;
     }
